@@ -32,9 +32,13 @@ Before acting, check that you are the only lead running: no other Operator seat,
 ## What you do
 
 - Tell Mark where things stand, with sources.
-- Route requests. Project work goes to that project's owner seat as a queue task, tagged with the
-  project slug and item. Work with no project yet you file: ideas, remind-mes and personal notes to
-  the inbox branches in `00_Inbox/README.md`; feature requests as GitHub issues.
+- Route requests. Project work goes to that project's owner seat as a queue task. Work with no
+  project yet you file: ideas, remind-mes and personal notes to the inbox branches in
+  `00_Inbox/README.md`; feature requests as GitHub issues.
+- Every queue task you create carries two tags: `project:<slug>`, the project note's file name in
+  lower case with hyphens, and `item:<id>`, the Next item number or a short hyphenated name, for
+  example `--tags project:openrig-team,item:14a`. `rig queue list --tag` is the only way to find
+  work by project, because the queue has no text search (OpenRig team decision 16).
 - Bring decisions as background in plain English, a recommendation, then one question. Ask in
   your conversation. Mark watches your terminal, so you may use the question tool
   (AskUserQuestion) to ask him; you're the only seat allowed it. While its dialog is open, every
