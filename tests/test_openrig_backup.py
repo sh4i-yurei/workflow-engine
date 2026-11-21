@@ -271,6 +271,36 @@ def test_entrypoint_uses_home_and_ignores_working_folder(tmp_path, monkeypatch):
     assert list(elsewhere.iterdir()) == []
 
 
+def test_defaults_in_process_use_home(tmp_path, monkeypatch, capsys):
+    home = tmp_path / "home"
+    db_dir = home / ".openrig"
+    db_dir.mkdir(parents=True)
+    source, writer = database(db_dir)
+    writer.close()
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    assert openrig_backup.main([]) == 0
+    dest = home / ".openrig/backups/db"
+    made = copies(dest)
+    assert len(made) == 1
+    assert capsys.readouterr().out == (
+        f"openrig-backup: wrote {made[0]} ({made[0].stat().st_size} bytes), removed 0 old files\n"
+    )
+    assert list(elsewhere.iterdir()) == []
+
+
+def test_default_keeps_48_hours(tmp_path):
+    db, writer = database(tmp_path)
+    dest, now = tmp_path / "copies", dt.datetime.now(UTC)
+    kept = old_copy(dest, 47.5, now)
+    expired = old_copy(dest, 48.5, now)
+    assert run(db, dest) == 0
+    writer.close()
+    assert kept.exists()
+    assert not expired.exists()
+
+
 def test_relative_paths_with_uri_punctuation(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     folder = tmp_path / "my rig#1?x"
