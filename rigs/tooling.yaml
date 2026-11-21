@@ -49,3 +49,21 @@ pods:
             - path: startup/workflow-upkeep-rules.md
               delivery_hint: send_text
               required: true
+      # A read-only review seat (Mark's decision, 2026-11-21 22:55Z). It sits in this pod because
+      # decision 27 makes a pod a project and the review has no project of its own. It owns none of
+      # Workflow upkeep's work, and it denies the edit tools as well as the dialogs.
+      - id: migration-review
+        label: Migration review
+        agent_ref: "local:../agents/migration-review"
+        runtime: claude-code
+        profile: default
+        env:
+          AGENT_NAME: workflow-upkeep-migration-review
+        claude_permissions:
+          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode", "Edit", "Write", "NotebookEdit"]
+        cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-migration-review"
+        startup:
+          files:
+            - path: startup/workflow-upkeep-migration-review.md
+              delivery_hint: send_text
+              required: true
