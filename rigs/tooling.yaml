@@ -1,0 +1,47 @@
+version: "0.2"
+name: tooling
+summary: Project owners for the tooling team
+managed_blocks:
+  claude-code: CLAUDE.local.md
+# Claude seats run in auto mode (OpenRig team note, decided 2026-11-20). Existing seats also got
+# `rig seat set-permissions <seat> --mode auto`, which overrides this line from then on. To change
+# the policy later, edit this line AND run `rig seat set-permissions <seat> --mode inherit` (or set
+# the new mode) on every existing seat, or the old choice stays.
+permission_policy: builtin:auto
+# Every Claude seat denies the question tool and plan mode (Mark's direction, 2026-11-20). Each opens a
+# dialog nobody watches, and OpenRig won't type into one, so queued work sticks behind it. Existing
+# seats got the same list with `rig seat set-permissions <seat> --rules <file>`, which REPLACES a
+# seat's recorded rules: read `rig seat status` before changing them.
+
+pods:
+  - id: workflow-upkeep
+    label: Workflow upkeep
+    members:
+      # Two seats, one per workstream (Workflow engine decision 28). The CI seat keeps the member id
+      # `owner` because it existed before the split; changing a member id makes a new seat.
+      - id: owner
+        label: CI
+        agent_ref: "local:../agents/owner"
+        runtime: claude-code
+        profile: default
+        claude_permissions:
+          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+        cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep"
+        startup:
+          files:
+            - path: startup/workflow-upkeep.md
+              delivery_hint: send_text
+              required: true
+      - id: rules
+        label: Workflow rules
+        agent_ref: "local:../agents/owner"
+        runtime: claude-code
+        profile: default
+        claude_permissions:
+          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+        cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-rules"
+        startup:
+          files:
+            - path: startup/workflow-upkeep-rules.md
+              delivery_hint: send_text
+              required: true
