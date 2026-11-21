@@ -21,6 +21,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: operations
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/operations/operations"

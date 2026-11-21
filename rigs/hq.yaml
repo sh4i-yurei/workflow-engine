@@ -22,6 +22,8 @@ pods:
         agent_ref: "local:../agents/operator"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: operator
         # The lead keeps the question tool: Mark watches this terminal, so asking him in a dialog is
         # right here (Mark, 2026-11-20). Plan mode stays denied.
         claude_permissions:
