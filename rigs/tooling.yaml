@@ -24,6 +24,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: workflow-upkeep-ci
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep"
@@ -37,6 +39,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: workflow-upkeep-rules
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-rules"

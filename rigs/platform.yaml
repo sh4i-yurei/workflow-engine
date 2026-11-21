@@ -21,6 +21,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: ansible-configuration-management
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/ansible-configuration-management"
@@ -36,6 +38,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: infrastructure-as-code
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/infrastructure-as-code"
@@ -51,6 +55,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: nightly-issue-pipeline
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/nightly-issue-pipeline"
@@ -66,6 +72,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: staging-environment
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/staging-environment"
@@ -81,6 +89,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: backups
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/backups"

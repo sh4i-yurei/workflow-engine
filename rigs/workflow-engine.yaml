@@ -21,6 +21,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: workflow-engine
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/workflow-engine/workflow-engine"
@@ -36,6 +38,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: work-system
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/workflow-engine/work-system"
@@ -51,6 +55,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: openrig-team
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/workflow-engine/openrig-team"
@@ -66,6 +72,8 @@ pods:
         agent_ref: "local:../agents/owner"
         runtime: claude-code
         profile: default
+        env:
+          AGENT_NAME: token-baseline-and-quick-wins
         claude_permissions:
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/workflow-engine/token-baseline-and-quick-wins"
