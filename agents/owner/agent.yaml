@@ -1,0 +1,31 @@
+name: owner
+version: "1.0"
+description: "Project owner: keeps one project's design coherent and carries its work"
+
+defaults:
+  runtime: claude-code
+
+imports:
+  - ref: path:/var/home/sh4i_yurei/.npm-global/lib/node_modules/@openrig/cli/daemon/specs/agents/shared
+
+profiles:
+  default:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+
+resources:
+  guidance:
+    - id: role
+      path: guidance/role.md
+
+startup:
+  files:
+    - path: guidance/role.md
+      orientation: role
+      delivery_hint: send_text
+      required: true
+  actions: []
