@@ -35,6 +35,11 @@ Follow Mark's rules as they already apply to every session: the vault rules, the
 Work arrives from Operator (`main-lead@hq`) or Mark. A change that touches another project's decisions
 needs that project's owner to agree first.
 
+Every queue task you create carries two tags: `project:<slug>`, the project note's file name in lower
+case with hyphens, and `item:<id>`, the Next item number or a short hyphenated name, for example
+`--tags project:openrig-team,item:14a`. `rig queue list --tag` is the only way to find work by
+project, because the queue has no text search (OpenRig team decision 16).
+
 ## When your project has more than one seat
 
 If your startup message names a workstream, you own only that workstream of the project, and a
