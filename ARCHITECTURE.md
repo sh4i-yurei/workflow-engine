@@ -147,7 +147,7 @@ workstream where a project has several, which leads and orchestrates that projec
 Requests between seats travel on OpenRig's queue, addressed by OpenRig address and tagged with the
 project and item, and a `rig send` nudge wakes the seat that owns a row. An owner doesn't do jobs
 in its own session. Each job, whether a Codex build through the build loop, a test run, a CI
-rehearsal or a review, runs in its own labelled pane in the owner's `<OpenRig address> jobs` tab
+rehearsal or a review, runs in its own labelled pane in the team's shared `jobs` tabs
 in herdr, and ends with an `AGENT-EXIT` line that the owner waits on. The owner records the result
 on the row, closes the pane, and nudges the lead only for a decision, a break, or work done with
 proof.
@@ -160,7 +160,7 @@ sequenceDiagram
   participant Op as Operator seat<br/>main-lead@hq
   participant Q as OpenRig queue
   participant Ow as Owner seat
-  participant J as Job pane in the<br/>owner's jobs tab
+  participant J as Owner's job pane in<br/>the team's jobs tab
   U->>Op: a request
   Op->>Q: rig queue create, tagged project and item
   Q-->>Ow: nudge typed into the owner's terminal
@@ -181,7 +181,7 @@ sequenceDiagram
 | `agents/` | Define the lead and the owner seat kinds and their role text | OpenRig agent specs | OpenRig's shared agent spec | `rig up` refuses a missing or invalid spec | carry one project's details; those go in the team file's startup file |
 | Team reader (planned) | Turn the team files into a list of teams, each with its seats' sessions, labels and names | a function returning plain data | PyYAML | raises on a file that isn't valid YAML or lacks a field it needs | run a command, or read anything but `rigs/` |
 | herdr reader (planned) | Take a snapshot of herdr: workspaces, tabs, panes, agent names, and which seat each tile attaches to | a function returning plain data | the `herdr` CLI's JSON output | raises when herdr can't be reached or answers in a shape it doesn't know | change anything in herdr |
-| Planner (planned) | Compare the teams with the snapshot and list the actions that close the gap | a pure function, teams plus snapshot in, actions out | nothing | it can't fail at run time; a team it can't place is reported as an action that needs a person | call a command, read a file, or plan any change to an owner's `<agent name> jobs` tab |
+| Planner (planned) | Compare the teams with the snapshot and list the actions that close the gap | a pure function, teams plus snapshot in, actions out | nothing | it can't fail at run time; a team it can't place is reported as an action that needs a person | call a command, read a file, or plan any change to a team's shared `jobs` tabs |
 | Executor (planned) | Carry out the actions in order and report each result | a function taking the actions | the `herdr` and `rig` CLIs | stops at the first failed action, reports it and exits nonzero | close a pane, or carry out an action the planner didn't list |
 | Command (planned) | Run the step for every team or one team, with a dry run that prints the plan | `team-view [--team <rig>] [--dry-run]` | all of the above | exit 0 when done or nothing to do, 1 when an action failed, 2 on bad input | prompt for input |
 | `tools/openrig_backup.py` | Copy OpenRig's database, check the copy, compress it, keep it for 48 hours, and remove older copies after a good one | `openrig_backup.py [--db PATH] [--dest DIR] [--keep-hours N]`, run by `/usr/bin/python3` | Python's standard library only (`sqlite3`, `lzma`) | exit 1 with one line on standard error when the database can't be read or the copy fails its check, after deleting its own unfinished files; nothing is pruned after a failure; exit 2 on bad arguments | write to the live database, open it any way but read-only, or delete a file in the copies folder whose name isn't one of its own copies or unfinished files |
@@ -205,8 +205,8 @@ without herdr or OpenRig running, and so its mutants can be killed by ordinary t
 - **The seat's name comes from its team file.** The step reads `AGENT_NAME` from the seat's tmux
   session when it is set, and from the team file otherwise, because a running seat only gets a
   newly declared name at its next launch.
-- **Job tabs belong to their owners.** The step never creates, changes or closes a tab named
-  `<agent name> jobs` or `<agent name> jobs N` (Workflow upkeep decision 80).
+- **Job tabs belong to the seats.** The step never creates, changes or closes the shared tabs
+  named `jobs` or `jobs N`, or any pane in them (Workflow upkeep decision 80).
 - **Seats never get `HERDR_PANE_ID` or `HERDR_WORKSPACE_ID`.** With them, claude-config's
   herdr-name hook would rename every seat after its workspace.
 - **Pinned tools.** Every dependency and CI action is pinned to an exact version or commit.
