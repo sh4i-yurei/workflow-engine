@@ -11,14 +11,16 @@ need is written down.
 1. Run `rig whoami --json` to confirm your seat. Its `sessionName` is your OpenRig address, such as
    `workflow-upkeep-rules@tooling`, and it's the only name other seats and rules use for you. A
    herdr name on your view tile is a label, and nothing depends on it (Workflow engine decision 31).
-2. Clear job tabs left from before (Workflow upkeep decision 80). List every tab with
-   `herdr tab list`, and take only those whose label is "<your OpenRig address> jobs". After a
-   reboot, herdr restores them as fresh shells, and the runs that were in them are dead. Close such a tab with `herdr tab close <tab_id>` only when every pane in
-   it shows nothing but a fresh shell prompt (`herdr pane read`). A pane showing output may be a
+2. Clear your own job panes left from before (Workflow upkeep decision 80). List your team
+   workspace's tabs with `herdr tab list --workspace <id>`, and in its shared "jobs" tabs take only
+   the panes whose label starts with "<seat>:", your OpenRig address before the `@`. After a
+   reboot, herdr restores them as fresh shells, and the runs that were in them are dead. Close such
+   a pane with `herdr pane close <pane_id>` only when it shows nothing but a fresh shell prompt
+   (`herdr pane read`). A pane showing output may be a
    run that is still alive, because a relaunch without a reboot doesn't stop it. Find that run's
    token on the row or buildlog that started it and wait on it, or, if you can't, report it to
    Operator on a row; never close it. Record every run that was cut off as failed, never as
-   finished, on the row or buildlog that owned it. Never touch another seat's tabs or a team tab.
+   finished, on the row or buildlog that owned it. Never touch another seat's panes or a team tab.
 3. Read your note in `~/Documents/Second_Brain/10_Projects/`, and its program charter if its
    frontmatter names one. The charter's decisions bind you.
 4. Read your open queue rows with `rig queue list --owned`. They are your live work.
@@ -45,9 +47,15 @@ already apply to every session: the vault rules, and the pane and testing rules.
    more than one seat, you lead your workstream (see below). OpenRig didn't replace herdr or the
    build loop. It added a routing layer between the leads.
 2. **Every job runs in its own pane, never in your own conversation.** The user watches the panes to see
-   what each job is and that it is still running. Your job tabs are labelled
-   "<your OpenRig address> jobs" and hold up to four panes each; a fifth job opens
-   "<your OpenRig address> jobs 2" (Workflow upkeep decision 80).
+   what each job is and that it is still running. Your team's workspace holds shared job tabs
+   named "jobs", "jobs 2" and so on, up to four panes each (Workflow upkeep decision 80). Before
+   each job, list the workspace's tabs with `herdr tab list --workspace <id>` and put the pane in
+   the lowest-numbered jobs tab with fewer than four panes, whoever's panes are in it; open the next
+   numbered tab only when every jobs tab is full. Keep each tab evenly laid out: two panes side by
+   side, four as an equal two-by-two grid, split at a ratio of 0.5, and never switch the user's
+   view (`--no-focus`). Label the pane "<seat>: <item> <job>", where <seat> is your OpenRig address
+   before the `@`, such as "workflow-upkeep-rules: 64 CI". Show the job's output in the pane, with
+   `tee` if you need a copy.
    - Code goes to Codex, started in its own pane through the build loop: the build spec in
      `05_Agents/handoffs/`, the gate, the pre-flight and the review rounds.
    - Tests, checks, mutation runs, scripts, local CI rehearsals, `vault-commit` and any other
@@ -55,9 +63,10 @@ already apply to every session: the vault rules, and the pane and testing rules.
      on.
    - Research and review run as focused agents, each in its own pane.
 
-   Only a single quick command whose output you read straight away runs in your own conversation.
-   Watch each job. When it finishes, record its result on the row or buildlog that owns it, then
-   close its pane.
+   Only a single quick command whose output you read straight away runs in your own conversation;
+   never a long wait or a background job. Watch each job. As soon as it finishes, record its result
+   on the row or buildlog that owns it and close your pane. A tab closes with its last pane, and
+   you never touch another seat's panes.
 3. **Requests between seats go on the queue,** with
    `rig queue create --destination <OpenRig address>`. Every queue task you create carries two
    tags: `project:<slug>`, the project note's file name in lower case with hyphens, and

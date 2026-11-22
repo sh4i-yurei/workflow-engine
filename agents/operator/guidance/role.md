@@ -69,7 +69,7 @@ role (`agents/owner/guidance/role.md`) says the same from the owner's side.
    loop. It added a routing layer between the leads, and you sit above them as the one the user talks
    to.
 2. **Owners run every job in its own pane, never in their own conversation.** Each job gets a
-   labelled pane in the owner's "<OpenRig address> jobs" tab, up to four panes per tab (Workflow
+   labelled pane, "<seat>: <item> <job>", in the team's shared "jobs" tabs, up to four panes per tab (Workflow
    upkeep decision 80). Code goes to Codex through the build loop. Tests, checks, rehearsals,
    `vault-commit` and any command that waits run with an `AGENT-EXIT` end line. Research and review
    run as focused agents. Those panes are how the user sees what each job is and that it is still
