@@ -13,9 +13,40 @@ Three kinds of thing live here.
 The **team files** are data. Each file in `rigs/` is an OpenRig RigSpec for one team: its pods,
 one per project, and each pod's seats, with the seat's role, working folder, permission policy,
 denied tools and declared herdr name (`env: {AGENT_NAME: <name>}`). The files in `agents/` define
-the two kinds of seat, the lead (`operator`) and a project owner (`owner`), and the role text each
-one starts with. OpenRig reads these files when a team is brought up; nothing in this repository
-runs them.
+the kinds of seat, the lead (`operator`), a project owner (`owner`) and a one-off read-only
+reviewer (`migration-review`), and the role text each one starts with. OpenRig reads these files
+when a team is brought up; nothing in this repository runs them.
+
+This diagram shows how the team files become running seats. OpenRig's daemon reads them when a
+team is brought up, launches each seat as Claude Code in its own tmux session, and records the
+queue and every seat in one SQLite file; herdr shows each seat in a tile attached to that session.
+
+```mermaid
+flowchart TB
+  subgraph repo["This repository"]
+    direction LR
+    rigs["rigs/*.yaml<br/>team files"]
+    agents["agents/<br/>seat kinds and role text"]
+    startup["rigs/startup/*.md<br/>startup files"]
+  end
+  subgraph dev["dev container"]
+    direction TB
+    daemon["OpenRig daemon"]
+    seats["Seats<br/>Claude Code in tmux sessions"]
+    herdr["herdr<br/>terminal view"]
+  end
+  db[("~/.openrig/openrig.sqlite<br/>queue and seat records")]
+  repo -->|"read at rig up"| daemon
+  daemon <-->|"launches seats; seats call<br/>rig queue and rig send"| seats
+  seats ---|"one tile per seat,<br/>attached to its tmux session"| herdr
+  daemon -->|"writes"| db
+  classDef file fill:#1f4e79,stroke:#9cc3e6,color:#ffffff
+  classDef proc fill:#385723,stroke:#a9d18e,color:#ffffff
+  classDef store fill:#7f4f00,stroke:#ffd966,color:#ffffff
+  class rigs,agents,startup file
+  class daemon,seats,herdr proc
+  class db store
+```
 
 The **team-view step** is code, still to be built (OpenRig team decision 14). It makes each team's
 herdr space look the way the team files say it should: one workspace per team, the owners' tiles
@@ -23,6 +54,23 @@ in tabs of at most four with readable names, and every agent tile named with its
 It reads the team files and herdr's current state, works out what is missing, and asks herdr and
 OpenRig to make the changes. It runs after every power-on and whenever a team's view is needed,
 and running it twice changes nothing the second time.
+
+The planned step has five parts, shown below: two readers, a pure planner, an executor, and the
+command that runs them (in the table under "The pieces").
+
+```mermaid
+flowchart TB
+  rigs["rigs/*.yaml"] -->|"read"| tr["team reader"]
+  hc["herdr CLI"] -->|"JSON snapshot"| hr["herdr reader"]
+  tr -->|"teams"| pl["planner, pure"]
+  hr -->|"snapshot"| pl
+  pl -->|"actions"| ex["executor"]
+  ex -->|"commands"| clis["herdr CLI and rig CLI"]
+  classDef file fill:#1f4e79,stroke:#9cc3e6,color:#ffffff
+  classDef proc fill:#385723,stroke:#a9d18e,color:#ffffff
+  class rigs,hc,clis file
+  class tr,hr,pl,ex proc
+```
 
 The **operational tools** keep a running team safe. The first is the database backup (OpenRig
 team decision 15). OpenRig's queue is the only record of open work between agents (Workflow
@@ -34,9 +82,25 @@ nothing has to be installed for it there, and because a container would have to 
 OpenRig folder for SELinux. A copy of the script and its units is installed from a merged
 commit, so the timer never runs whatever branch a checkout happens to be on.
 
-```text
-~/.openrig/openrig.sqlite ──online backup──▶ .partial copy ──integrity check──▶ xz ──rename──▶ ~/.openrig/backups/db/openrig-<UTC>.sqlite.xz
-                                                                                              └──after a good copy: remove copies over 48 h old
+This diagram follows one hourly run, including what happens when a copy fails its check.
+
+```mermaid
+flowchart TB
+  timer["systemd user timer<br/>hourly, on the host"] -->|"runs"| script["tools/openrig_backup.py"]
+  db[("~/.openrig/openrig.sqlite<br/>live database")]
+  script -->|"SQLite online backup,<br/>opened read-only"| db
+  db -->|"copied into"| partial["unfinished .partial copy"]
+  partial -->|"integrity check"| ok{{"Copy passes?"}}
+  ok -->|"no"| fail["Delete its own<br/>unfinished files;<br/>exit 1, prune nothing"]
+  ok -->|"yes"| xz["compress with xz"]
+  xz -->|"rename"| copy[("~/.openrig/backups/db/<br/>openrig-#lt;UTC#gt;.sqlite.xz")]
+  copy -->|"after a good copy"| prune["remove copies older than 48 hours"]
+  classDef proc fill:#385723,stroke:#a9d18e,color:#ffffff
+  classDef store fill:#7f4f00,stroke:#ffd966,color:#ffffff
+  classDef bad fill:#7b2020,stroke:#f4b183,color:#ffffff
+  class timer,script,partial,xz,prune,ok proc
+  class db,copy store
+  class fail bad
 ```
 
 The second is `rigs-up` (OpenRig team decision 17), the one command that restarts everything after a power loss.
@@ -46,17 +110,67 @@ seat isn't up fails instead of waiting. It judges what to start and when it's do
 own record of each seat, `rig ps --nodes -A --json`, including which seats were stopped on
 purpose. So it holds no list of teams or seats, and running it twice starts nothing the second
 time. herdr is started only when `herdr status server --json` doesn't report `"running": true`;
-a running herdr is left alone rather than given another client.
+a running herdr is left alone rather than given another client. At login, the desktop autostart
+entry `autostart/rigs-up.desktop` opens a Ghostty window that runs it, so after a power-off nothing
+has to be typed.
 
-```text
-host ──distrobox enter dev──▶ rigs-up in dev ──rig ps──▶ seats down? ──▶ rig start --last ──▶ kernel seats down? ──▶ rig up kernel --existing </dev/null
-                                                                                         └──wait until every seat not stopped on purpose is running and ready──▶ queue task to the lead ──▶ exec herdr unless it is already running
+This diagram follows rigs-up from login to herdr, with each decision it makes from `rig ps`.
+
+```mermaid
+flowchart TB
+  login["Desktop login:<br/>autostart entry"] -->|"Ghostty runs<br/>~/.local/bin/rigs-up"| enter["rigs-up on the host"]
+  enter -->|"distrobox enter dev"| ps["rigs-up in dev<br/>reads rig ps"]
+  ps --> other{{"Daemon silent, or a seat<br/>outside the kernel down?"}}
+  other -->|"yes"| start["rig start --last"]
+  other -->|"no"| kernel{{"A kernel seat down?"}}
+  start --> kernel
+  kernel -->|"yes"| up["rig up kernel --existing<br/>input from /dev/null"]
+  kernel -->|"no"| wait["Wait until every seat<br/>not stopped on purpose<br/>is running and ready"]
+  up --> wait
+  wait -->|"time runs out"| fail["Exit 1, naming the step;<br/>herdr not started"]
+  wait -->|"rig queue create"| tell["Queue task to<br/>main-lead@hq"]
+  tell --> h{{"herdr already running?"}}
+  h -->|"no"| exec["exec herdr"]
+  h -->|"yes"| leave["Done; herdr<br/>left as it is"]
+  classDef proc fill:#385723,stroke:#a9d18e,color:#ffffff
+  classDef bad fill:#7b2020,stroke:#f4b183,color:#ffffff
+  classDef ext fill:#1f4e79,stroke:#9cc3e6,color:#ffffff
+  class login,enter ext
+  class ps,other,start,kernel,up,wait,tell,h,exec,leave proc
+  class fail bad
 ```
 
-```text
-rigs/*.yaml ──read──▶ team reader ──┐
-                                    ├──▶ planner (pure) ──actions──▶ executor ──▶ herdr CLI, rig CLI
-herdr CLI ───read──▶ herdr reader ──┘
+## How work moves between seats
+
+The user talks to one seat, the lead, `main-lead@hq`. Each project has an owner seat, one per
+workstream where a project has several, which leads and orchestrates that project's work.
+Requests between seats travel on OpenRig's queue, addressed by OpenRig address and tagged with the
+project and item, and a `rig send` nudge wakes the seat that owns a row. An owner doesn't do jobs
+in its own session. Each job, whether a Codex build through the build loop, a test run, a CI
+rehearsal or a review, runs in its own labelled pane in the owner's `<OpenRig address> jobs` tab
+in herdr, and ends with an `AGENT-EXIT` line that the owner waits on. The owner records the result
+on the row, closes the pane, and nudges the lead only for a decision, a break, or work done with
+proof.
+
+This diagram follows one request from the user to an owner's job pane and back.
+
+```mermaid
+sequenceDiagram
+  actor U as User
+  participant Op as Operator seat<br/>main-lead@hq
+  participant Q as OpenRig queue
+  participant Ow as Owner seat
+  participant J as Job pane in the<br/>owner's jobs tab
+  U->>Op: a request
+  Op->>Q: rig queue create, tagged project and item
+  Q-->>Ow: nudge typed into the owner's terminal
+  Ow->>Q: rig queue claim
+  Ow->>J: start the job (Codex build, checks, rehearsal, review)
+  J-->>Ow: AGENT-EXIT line with the exit code
+  Ow->>Ow: record the result, close the pane
+  Ow->>Q: note on the row, then close or park it
+  Ow-->>Op: rig send nudge: a decision, a break, or done with proof
+  Op->>U: only what needs the user
 ```
 
 ## The pieces
