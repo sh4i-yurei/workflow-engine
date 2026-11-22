@@ -26,8 +26,22 @@ pods:
         profile: default
         env:
           AGENT_NAME: workflow-upkeep-ci
+        # The CI seat may set up CI on the sh4i-yurei repositories: create or update a ruleset, and
+        # set branch protection or its required status checks (decided 2026-11-22). Auto mode lets a
+        # specific allow rule skip its classifier, but it suspends rules that could run arbitrary
+        # code, so the same scope is also given to the classifier in prose below. Neither covers
+        # deleting a ruleset or protection, or any other repository setting.
         claude_permissions:
+          allow:
+            - "Bash(vault-run --env GH_TOKEN -- gh api --method POST repos/sh4i-yurei/*/rulesets*)"
+            - "Bash(vault-run --env GH_TOKEN -- gh api --method PUT repos/sh4i-yurei/*/rulesets/*)"
+            - "Bash(vault-run --env GH_TOKEN -- gh api --method PUT repos/sh4i-yurei/*/branches/*/protection*)"
+            - "Bash(vault-run --env GH_TOKEN -- gh api --method PATCH repos/sh4i-yurei/*/branches/*/protection/required_status_checks*)"
           deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+        claude_auto_mode:
+          allow:
+            - "$defaults"
+            - "Setting up CI on the user's own GitHub repositories under the owner sh4i-yurei: creating a repository ruleset or updating an existing one (for example adding a required status check such as python / checks to the main branch's ruleset), and setting branch protection or its required status checks, through vault-run --env GH_TOKEN -- gh api with --method POST, PUT or PATCH. The user decided on 2026-11-22 that this seat sets up CI. It never covers deleting a ruleset or branch protection, removing or weakening an existing rule, changing repository visibility, collaborators, secrets or webhooks, or any repository outside sh4i-yurei."
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep"
         startup:
           files:
