@@ -1,0 +1,6 @@
+[Unit]
+Description=Back up OpenRig's database (OpenRig team decision 15)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/.local/lib/openrig-backup/openrig_backup.py

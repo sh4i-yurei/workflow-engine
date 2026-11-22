@@ -1,0 +1,37 @@
+# Equivalent mutants confirmed by a scoped local mutmut run.
+- mutant: tools.openrig_backup.x_check_copy__mutmut_6
+  reason: >-
+    SQLite reads keywords and pragma names without regard to case, so
+    "pragma integrity_check" runs the same check and returns the same rows.
+- mutant: tools.openrig_backup.x_check_copy__mutmut_7
+  reason: >-
+    SQLite reads keywords and pragma names without regard to case, so
+    "PRAGMA INTEGRITY_CHECK" runs the same check and returns the same rows.
+- mutant: tools.openrig_backup.x_copy_database__mutmut_9
+  reason: >-
+    urllib.parse.quote already uses safe="/" by default, so dropping the
+    argument builds the same URI for every path.
+- mutant: tools.openrig_backup.x_copy_database__mutmut_11
+  reason: >-
+    quote never escapes letters, so adding X to the safe characters changes
+    nothing; "/" stays safe and the URI is the same for every path.
+- mutant: tools.openrig_backup.x_main__mutmut_53
+  reason: >-
+    False and None are both false in the only test of succeeded, the cleanup in
+    the finally block, and succeeded is set to True before a good run returns.
+- mutant: tools.openrig_backup.x_main__mutmut_83
+  reason: >-
+    After a good copy both unfinished files are already gone: the plain copy was
+    deleted and the compressed one renamed. The cleanup's unlink(missing_ok=True)
+    then removes nothing, so None and True give the same files and output.
+- mutant: tools.openrig_backup.x_main__mutmut_84
+  reason: >-
+    After a good copy both unfinished files are already gone: the plain copy was
+    deleted and the compressed one renamed. The cleanup's unlink(missing_ok=True)
+    then removes nothing, so False and True give the same files and output.
+- mutant: tools.openrig_backup.x_prune__mutmut_29
+  reason: >-
+    made and cutoff differ only when a copy's name, which has whole seconds,
+    equals now minus the keep window to the microsecond. The run reads the real
+    clock, so no input through the command line can make them equal; a test
+    would have to pin the clock inside the module.

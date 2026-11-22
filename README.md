@@ -1,6 +1,6 @@
 # workflow-engine
 
-The OpenRig team files for Mark's agent teams, and the code that lays the teams out in herdr.
+The OpenRig team files for Mark's agent teams, and the code that lays the teams out in herdr, and the tools that keep them running.
 
 - `rigs/` holds one RigSpec per team: `hq`, `platform`, `tooling`, `operations` and
   `workflow-engine`.
@@ -8,3 +8,18 @@ The OpenRig team files for Mark's agent teams, and the code that lays the teams 
 
 Bring a stopped team back with `rig up <team> --existing`, and check a team file with
 `rig spec validate rigs/<team>.yaml`. How the pieces fit is in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Database backup
+
+The systemd user timer runs an online backup of OpenRig's database every hour. It checks and compresses each copy, stores it in `~/.openrig/backups/db/`, and keeps copies for 48 hours.
+
+After the change has been merged, install a copy from the merged checkout on the host:
+
+```bash
+install -D -m 0644 tools/openrig_backup.py ~/.local/lib/openrig-backup/openrig_backup.py
+install -D -m 0644 -t ~/.config/systemd/user/ systemd/openrig-backup.service systemd/openrig-backup.timer
+systemctl --user daemon-reload
+systemctl --user enable --now openrig-backup.timer
+```
+
+To restore a chosen copy, stop the daemon with `rig daemon stop`. Decompress the copy over the database with `xz -dc ~/.openrig/backups/db/<copy> > ~/.openrig/openrig.sqlite`. Remove `~/.openrig/openrig.sqlite-wal` and `~/.openrig/openrig.sqlite-shm`. Replay any queue erasure made after the copy's time as OpenRig's queue-erasure guide says. Start OpenRig the usual way with `rig start` from a fresh terminal (OpenRig team decision 10). Afterwards, check that the kernel's advisor seat is still stopped (decision 11).
