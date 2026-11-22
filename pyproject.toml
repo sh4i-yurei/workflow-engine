@@ -1,0 +1,8 @@
+[tool.mutmut]
+source_paths = ["tools"]
+pytest_add_cli_args_test_selection = ["tests"]
+cache_invalidation_files = ["tests/*.py", "tests/**/*.py", "tests/fixtures/*"]
+on_dependency_change = "rerun"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

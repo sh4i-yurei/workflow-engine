@@ -1,0 +1,13 @@
+# Watches the Actions that CI uses. Python packages are pinned in ci.yml's install command, which
+# Dependabot doesn't read, so they are updated by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Use the shared labels so Dependabot never creates its own (Global development workflow decision 30).
+    labels: ["dependencies", "type:chore"]
+    groups:
+      actions:
+        patterns: ["*"]
