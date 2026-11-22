@@ -22,7 +22,7 @@ rather than hanging:
 
 - OpenRig's queue: `rig queue list --all-rigs`;
 - each project's "Where it stands" and "Next" in `~/Documents/Second_Brain/10_Projects/`, and the
-  latest parking or buildlog entries;
+  latest buildlog entries;
 - the GitHub Projects boards, through `vault-run --env GH_TOKEN -- gh ...`. If the vault is locked,
   say "the vault is locked, run vu", never that GitHub is unreachable.
 
@@ -46,8 +46,13 @@ Before acting, check that you are the only lead running: no other Operator seat,
   Never use plan mode, which is denied to you.
 - Owners report to you on queue rows, and their `rig send` is only a nudge, which can be refused
   while your input box holds a draft. So read your queue, not only your messages. Owners send
-  the decisions that need Mark the same way. Bring each
-  one to Mark, then send his answer back to the owner that asked.
+  the decisions that need Mark the same way. Bring each one to Mark, then send his answer back
+  to the owner that asked, in a way that wakes it. If the owner's row is parked waiting for the
+  answer, use `rig queue resolve <row> --decision "<answer>"`, which records it, unparks the row
+  and nudges the owner. Otherwise send it as a new row, or as a note followed by
+  `rig send <owner address>`. A note alone wakes nobody (Workflow engine decision 31).
+- Address every seat by its OpenRig address, such as `workflow-upkeep-rules@tooling`. herdr names
+  are labels on the view, and nothing depends on them (Workflow engine decision 31).
 - Watch work in flight. Report failures, stalls and dead seats with evidence. Relay "done" only with
   proof attached (a commit, a CI run). An agent's report is a claim.
 - Collect what waits on Mark into the next briefing. Interrupt only for urgent things.

@@ -6,14 +6,12 @@ down.
 
 ## On start
 
-1. Run `rig whoami --json` to confirm your seat.
-   Your herdr agent name is your pod id, or `<pod id>-<workstream>` if your startup message names
-   a workstream.
-2. Clear job tabs left from before (Workflow upkeep decision 80). Find your workspace with
-   `herdr agent get <your agent name>` (`.result`'s `workspace_id`). Then list its tabs with
-   `herdr tab list --workspace <workspace>`, and take only those whose label starts with
-   "<your agent name> jobs". After a reboot, herdr restores them as fresh shells, and the runs that
-   were in them are dead. Close such a tab with `herdr tab close <tab_id>` only when every pane in
+1. Run `rig whoami --json` to confirm your seat. Its `sessionName` is your OpenRig address, such as
+   `workflow-upkeep-rules@tooling`, and it's the only name other seats and rules use for you. A
+   herdr name on your view tile is a label, and nothing depends on it (Workflow engine decision 31).
+2. Clear job tabs left from before (Workflow upkeep decision 80). List every tab with
+   `herdr tab list`, and take only those whose label is "<your OpenRig address> jobs". After a
+   reboot, herdr restores them as fresh shells, and the runs that were in them are dead. Close such a tab with `herdr tab close <tab_id>` only when every pane in
    it shows nothing but a fresh shell prompt (`herdr pane read`). A pane showing output may be a
    run that is still alive, because a relaunch without a reboot doesn't stop it. Find that run's
    token on the row or buildlog that started it and wait on it, or, if you can't, report it to
@@ -25,7 +23,9 @@ down.
 5. Find your project's buildlogs: the files in `20_Buildlogs/*/*-log.md` whose frontmatter says
    `project: "[[<your note's name>]]"`. Read the latest entry in each one, whatever kind it is. A
    project may have none yet, and a program charter never has one.
-6. Read every handoff in `05_Agents/handoffs/` for your project whose `state` isn't `done`.
+6. Read the build specs and review notes in `05_Agents/handoffs/` that your open rows name. The
+   older handoff notes there are an archive, and you don't read them on start (Workflow engine
+   decision 31).
 7. Tell the person what you found in a few sentences, then wait for work. Start nothing on your own.
 
 ## How you work
@@ -40,11 +40,18 @@ case with hyphens, and `item:<id>`, the Next item number or a short hyphenated n
 `--tags project:openrig-team,item:14a`. `rig queue list --tag` is the only way to find work by
 project, because the queue has no text search (OpenRig team decision 16).
 
+Address every seat by its OpenRig address, never by a herdr name. When you answer a row another seat
+owns, wake that seat. If the row is parked on an outside gate, answer with
+`rig queue resolve <row> --decision "<answer>"`, which records the answer, unparks the row and nudges
+its owner. Otherwise send the answer as a new row to the owner, or write the note and then nudge
+with `rig send <owner address>` and one line. A note alone wakes nobody (Workflow engine decision
+31).
+
 ## When your project has more than one seat
 
 If your startup message names a workstream, you own only that workstream of the project, and a
 sibling seat owns each other workstream (Workflow engine decision 28). You own your workstream's
-queue rows, handoffs, buildlog entries and items in Next. The project note is shared: edit only your
+queue rows, build specs, buildlog entries and items in Next. The project note is shared: edit only your
 workstream's parts, and keep your own paragraph in "Where it stands". Before you change a decision
 or a file that belongs to a sibling's workstream, agree it with that seat on a queue row. If a task
 reaches you that belongs to a sibling, hand the row to that seat with `rig queue handoff`. Don't do
