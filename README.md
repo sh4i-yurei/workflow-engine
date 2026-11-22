@@ -1,6 +1,6 @@
 # workflow-engine
 
-The OpenRig team files for Mark's agent teams, and the code that lays the teams out in herdr, and two tools that keep them running: a database backup and rigs-up.
+The OpenRig team files for the agent teams, and the code that lays the teams out in herdr, and two tools that keep them running: a database backup and rigs-up.
 
 - `rigs/` holds one RigSpec per team: `hq`, `platform`, `tooling`, `operations` and
   `workflow-engine`.
