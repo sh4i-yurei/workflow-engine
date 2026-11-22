@@ -39,7 +39,7 @@ commit, so the timer never runs whatever branch a checkout happens to be on.
                                                                                               └──after a good copy: remove copies over 48 h old
 ```
 
-The second is `rigs-up` (OpenRig team decision 17), the one command Mark types after a power loss.
+The second is `rigs-up` (OpenRig team decision 17), the one command that restarts everything after a power loss.
 It brings every team back in the only order that works: OpenRig first, then the kernel without
 its stopped advisor, then a wait until every seat is up, and herdr last, because a herdr tile whose
 seat isn't up fails instead of waiting. It judges what to start and when it's done from OpenRig's
