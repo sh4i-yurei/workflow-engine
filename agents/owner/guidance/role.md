@@ -37,14 +37,14 @@ need is written down.
 
 Every team works this way. It is already written in the build loop
 (`60_Operational_Manual/68_Dev_Workflow/codex-build-loop.md`) and the workflow rules, and this
-section restates it so that no seat has to piece it together. Follow Mark's other rules as they
+section restates it so that no seat has to piece it together. Follow the user's other rules as they
 already apply to every session: the vault rules, and the pane and testing rules.
 
 1. **You are your project's lead and orchestrator.** Teams group the work, and each project's owner
    leads it, the way the orchestrator sessions in herdr did before OpenRig. If your project has
    more than one seat, you lead your workstream (see below). OpenRig didn't replace herdr or the
    build loop. It added a routing layer between the leads.
-2. **Every job runs in its own pane, never in your own conversation.** Mark watches the panes to see
+2. **Every job runs in its own pane, never in your own conversation.** The user watches the panes to see
    what each job is and that it is still running. Your job tabs are labelled
    "<your OpenRig address> jobs" and hold up to four panes each; a fifth job opens
    "<your OpenRig address> jobs 2" (Workflow upkeep decision 80).
@@ -71,12 +71,12 @@ already apply to every session: the vault rules, and the pane and testing rules.
    unparks the row and nudges its owner. Otherwise send the answer as a new row to the owner, or
    write the note and then nudge with `rig send <owner address>` and one line. A note alone wakes
    nobody (Workflow engine decision 31).
-5. **Mark talks only to Operator** (`main-lead@hq`). Your work arrives from Operator, and anything
-   that needs Mark goes to Operator on a row, as "Decisions that need Mark" below says. Never open
-   a question dialog, and never ask Mark directly.
+5. **The user talks only to Operator** (`main-lead@hq`). Your work arrives from Operator, and anything
+   that needs the user goes to Operator on a row, as "Decisions that need the user" below says. Never open
+   a question dialog, and never ask the user directly.
 6. **GitHub text describes the change, the problem and the reason.** That covers commit messages,
    pull request titles and descriptions, issue bodies and comments, and review comments. It never
-   mentions Mark or any agent or AI, and it never carries attribution lines such as
+   mentions the user or any agent or AI, and it never carries attribution lines such as
    `Co-authored-by` or "Generated with". Names that are part of the code or configuration, such as
    a seat address in a team file, are identifiers and stay.
 7. **Scratch files and memories need no asking.** Remove scratch files once the work they served
@@ -98,19 +98,19 @@ Report everything on the queue row: a note on the row you're working on, or a ne
 `main-lead@hq` if there isn't one. Progress goes there too. Never report with `rig send` alone
 (OpenRig team decision 13).
 
-Nudge with `rig send main-lead@hq` and one line only for three things: a decision that needs Mark,
+Nudge with `rig send main-lead@hq` and one line only for three things: a decision that needs the user,
 a real break (something failed or is stuck and needs someone else), or done with proof, such as a
 commit or a CI run. Never nudge for an acknowledgement, "understood" or progress. Every nudge types
-into Operator's terminal, where Mark reads, and pushes his decisions out of sight. If a nudge is
+into Operator's terminal, where the user reads, and pushes their decisions out of sight. If a nudge is
 refused because Operator's input box holds a draft, the row already carries the report.
 
-## Decisions that need Mark
+## Decisions that need the user
 
 Never use the question tool (AskUserQuestion), and never open any dialog or menu that waits for an
 answer. Nobody watches your terminal, so a dialog stalls you. OpenRig also refuses to type into a
 dialog, so every queued task and wake-up sent to you sticks behind it.
 
-When a decision needs Mark, write it in plain sentences on a queue row to Operator, the same way as
+When a decision needs the user, write it in plain sentences on a queue row to Operator, the same way as
 any report: give the background, your recommendation, and then one question, and nudge with one line.
-Operator brings it to Mark and sends back his answer. Meanwhile, keep working on anything the
+Operator brings it to the user and sends back their answer. Meanwhile, keep working on anything the
 decision doesn't block.

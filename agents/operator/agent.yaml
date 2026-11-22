@@ -1,6 +1,6 @@
 name: operator
 version: "1.0"
-description: "Operator, the lead Mark talks to: briefs, routes and tracks work"
+description: "Operator, the lead the user talks to: briefs, routes and tracks work"
 
 defaults:
   runtime: claude-code

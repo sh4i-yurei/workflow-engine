@@ -8,7 +8,7 @@ managed_blocks:
 # the policy later, edit this line AND run `rig seat set-permissions <seat> --mode inherit` (or set
 # the new mode) on every existing seat, or the old choice stays.
 permission_policy: builtin:auto
-# Every Claude seat denies the question tool and plan mode (Mark's direction, 2026-11-20). Each opens a
+# Every Claude seat denies the question tool and plan mode (decided 2026-11-20). Each opens a
 # dialog nobody watches, and OpenRig won't type into one, so queued work sticks behind it. Existing
 # seats got the same list with `rig seat set-permissions <seat> --rules <file>`, which REPLACES a
 # seat's recorded rules: read `rig seat status` before changing them.
