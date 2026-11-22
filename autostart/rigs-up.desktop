@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=rigs-up
+Comment=Bring every OpenRig team back after a power-off and open herdr
+Exec=/var/home/sh4i_yurei/.local/bin/ghostty -e /var/home/sh4i_yurei/.local/bin/rigs-up
+Terminal=false
+X-GNOME-Autostart-enabled=true
