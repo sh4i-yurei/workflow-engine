@@ -33,3 +33,9 @@ After the change has been merged, install a copy from the merged checkout:
 ```bash
 install -D -m 0755 tools/rigs_up.py ~/.local/bin/rigs-up
 ```
+
+At login, the desktop runs rigs-up by itself through an autostart entry. It opens a Ghostty window that brings every team back and ends on herdr, the same as typing `rigs-up`. Install a copy of the entry from the merged checkout:
+
+```bash
+install -D -m 0644 autostart/rigs-up.desktop ~/.config/autostart/rigs-up.desktop
+```
