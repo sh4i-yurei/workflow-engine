@@ -1,8 +1,8 @@
 # Architecture
 
-This repository holds the files that define Mark's OpenRig teams, the code that makes those
-teams usable on his screen, and the tools that keep them running. OpenRig runs each team as a rig
-of Claude Code seats in tmux; herdr is the terminal Mark watches them in. The design decisions
+This repository holds the files that define the OpenRig teams, the code that lays those teams out
+on screen, and the tools that keep them running. OpenRig runs each team as a rig of Claude Code
+seats in tmux, and herdr is the terminal view that shows every seat. The design decisions
 behind it live in the vault, in the OpenRig team project note (decisions 5 to 15) and the Workflow
 upkeep project note (decision 80).
 
