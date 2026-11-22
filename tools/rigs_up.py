@@ -49,6 +49,25 @@ def read_seats():
     return json.loads(result.stdout), 0
 
 
+def herdr_running():
+    try:
+        result = subprocess.run(
+            ["herdr", "status", "server", "--json"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, UnicodeError):
+        return False
+    if result.returncode:
+        return False
+    try:
+        status = json.loads(result.stdout)
+    except ValueError:
+        return False
+    return isinstance(status, dict) and status.get("running") is True
+
+
 def down_seats(seats, rig=None):
     return [
         seat
@@ -168,11 +187,18 @@ def main(argv=None):
             )
         time.sleep(options.poll_seconds)
 
+    running = herdr_running()
     when = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    body = (
-        f"rigs-up finished at {when}: {summary}. herdr is starting now. "
-        "Please rename the herdr agents and check them."
-    )
+    if running:
+        body = (
+            f"rigs-up finished at {when}: {summary}. "
+            "herdr is already running, so it was left as it is."
+        )
+    else:
+        body = (
+            f"rigs-up finished at {when}: {summary}. herdr is starting now. "
+            "Please rename the herdr agents and check them."
+        )
     queue = [
         "rig",
         "queue",
@@ -190,11 +216,23 @@ def main(argv=None):
     ]
     result = subprocess.run(queue, stdin=subprocess.DEVNULL, capture_output=True)
     if result.returncode:
-        progress(
-            f"step 4 of 4: couldn't tell main-lead@hq (rig queue create exited {result.returncode}); starting herdr anyway"
-        )
+        if running:
+            progress(
+                f"step 4 of 4: couldn't tell main-lead@hq (rig queue create exited {result.returncode}); herdr is already running"
+            )
+        else:
+            progress(
+                f"step 4 of 4: couldn't tell main-lead@hq (rig queue create exited {result.returncode}); starting herdr anyway"
+            )
     else:
-        progress("step 4 of 4: told main-lead@hq the start is done; starting herdr")
+        if running:
+            progress(
+                "step 4 of 4: told main-lead@hq the start is done; herdr is already running"
+            )
+        else:
+            progress("step 4 of 4: told main-lead@hq the start is done; starting herdr")
+    if running:
+        return 0
     sys.stdout.flush()
     try:
         os.execvp("herdr", ["herdr"])
