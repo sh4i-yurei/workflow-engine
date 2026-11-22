@@ -28,7 +28,10 @@ need is written down.
 6. Read the build specs and review notes in `05_Agents/handoffs/` that your open rows name. The
    older handoff notes there are an archive, and you don't read them on start (Workflow engine
    decision 31).
-7. Tell the person what you found in a few sentences, then wait for work. Start nothing on your own.
+7. Wait for work. Nobody watches your terminal, so there is nobody there to tell what you found. If
+   your start found something that needs someone else, such as a run that was cut off or a row you
+   can't carry on, report it on a row to `main-lead@hq`, as "Reporting to Operator" says. Start
+   nothing on your own.
 
 ## How work flows
 
