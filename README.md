@@ -26,7 +26,7 @@ To restore a chosen copy, stop the daemon with `rig daemon stop`. Decompress the
 
 ## Starting everything after a reboot
 
-Type `rigs-up` in a Ghostty window on the host or in dev. It brings every OpenRig team back and then opens herdr. Unlocking the vault with `vu` is a separate step. The vault reference note `openrig-restart` has the manual fallback.
+Type `rigs-up` in a Ghostty window on the host or in dev. It brings every OpenRig team back and then opens herdr. If herdr is already running, rigs-up leaves it as it is. Unlocking the vault with `vu` is a separate step. The vault reference note `openrig-restart` has the manual fallback.
 
 After the change has been merged, install a copy from the merged checkout:
 

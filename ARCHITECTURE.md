@@ -45,11 +45,12 @@ its stopped advisor, then a wait until every seat is up, and herdr last, because
 seat isn't up fails instead of waiting. It judges what to start and when it's done from OpenRig's
 own record of each seat, `rig ps --nodes -A --json`, including which seats were stopped on
 purpose. So it holds no list of teams or seats, and running it twice starts nothing the second
-time.
+time. herdr is started only when `herdr status server --json` doesn't report `"running": true`;
+a running herdr is left alone rather than given another client.
 
 ```text
 host ──distrobox enter dev──▶ rigs-up in dev ──rig ps──▶ seats down? ──▶ rig start --last ──▶ kernel seats down? ──▶ rig up kernel --existing </dev/null
-                                                                                         └──wait until every seat not stopped on purpose is running and ready──▶ queue task to the lead ──▶ exec herdr
+                                                                                         └──wait until every seat not stopped on purpose is running and ready──▶ queue task to the lead ──▶ exec herdr unless it is already running
 ```
 
 ```text
@@ -71,7 +72,7 @@ herdr CLI ───read──▶ herdr reader ──┘
 | Command (planned) | Run the step for every team or one team, with a dry run that prints the plan | `team-view [--team <rig>] [--dry-run]` | all of the above | exit 0 when done or nothing to do, 1 when an action failed, 2 on bad input | prompt for input |
 | `tools/openrig_backup.py` | Copy OpenRig's database, check the copy, compress it, keep it for 48 hours, and remove older copies after a good one | `openrig_backup.py [--db PATH] [--dest DIR] [--keep-hours N]`, run by `/usr/bin/python3` | Python's standard library only (`sqlite3`, `lzma`) | exit 1 with one line on standard error when the database can't be read or the copy fails its check, after deleting its own unfinished files; nothing is pruned after a failure; exit 2 on bad arguments | write to the live database, open it any way but read-only, or delete a file in the copies folder whose name isn't one of its own copies or unfinished files |
 | `systemd/openrig-backup.service`, `.timer` | Run the backup hourly on the host, catching up on a missed hour | systemd user units, installed as copies under `~/.config/systemd/user/` | systemd's user manager, `/usr/bin/python3` | a failed run shows as a failed unit in `systemctl --user status` | run anything but the installed copy of the script |
-| `tools/rigs_up.py` | Bring every OpenRig team back after a reboot, then open herdr | `rigs-up [--wait-seconds N] [--poll-seconds N]`, installed as a copy at `~/.local/bin/rigs-up` and run by `/usr/bin/python3` on the host or in dev | the `rig`, `herdr` and `distrobox` CLIs; Python's standard library | exit 1 with one line naming the step when the daemon doesn't answer or seats aren't up in time, before herdr starts, or when herdr can't be started; exit 2 on bad arguments | start a seat OpenRig records as stopped on purpose, answer `rig up`'s fresh-session question, hold its own list of teams or seats, or change the team files |
+| `tools/rigs_up.py` | Bring every OpenRig team back after a reboot, then open herdr unless it is already running | `rigs-up [--wait-seconds N] [--poll-seconds N]`, installed as a copy at `~/.local/bin/rigs-up` and run by `/usr/bin/python3` on the host or in dev | the `rig`, `herdr` and `distrobox` CLIs; Python's standard library | exit 1 with one line naming the step when the daemon doesn't answer or seats aren't up in time, before herdr starts, or when herdr can't be started; exit 2 on bad arguments | start a seat OpenRig records as stopped on purpose, attach another client to a running herdr, answer `rig up`'s fresh-session question, hold its own list of teams or seats, or change the team files |
 
 The planner is pure so that every rule about what a team's space should look like can be tested
 without herdr or OpenRig running, and so its mutants can be killed by ordinary tests.

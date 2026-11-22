@@ -90,9 +90,137 @@ def fake_rig(tmp_path, monkeypatch):
     return set_responses, calls, execs
 
 
+@pytest.fixture
+def fake_herdr(fake_rig, tmp_path, monkeypatch):
+    binary = tmp_path / "herdr"
+    binary.write_text(
+        f"#!{sys.executable}\n"
+        "import json, os, sys\n"
+        "from pathlib import Path\n"
+        "folder = Path(__file__).parent\n"
+        "tty = os.isatty(0)\n"
+        "input_text = None if tty else sys.stdin.read()\n"
+        "with (folder / 'herdr-calls').open('a') as log:\n"
+        "    log.write(json.dumps({'args': sys.argv[1:], 'tty': tty, 'stdin': input_text}) + '\\n')\n"
+        "sys.stdout.buffer.write((folder / 'herdr-reply').read_bytes())\n"
+        "sys.exit(int(os.environ.get('FAKE_HERDR_RC', '0')))\n"
+    )
+    binary.chmod(0o755)
+
+    def reply(value):
+        if isinstance(value, bytes):
+            (tmp_path / "herdr-reply").write_bytes(value)
+        else:
+            (tmp_path / "herdr-reply").write_text(value)
+
+    def calls():
+        path = tmp_path / "herdr-calls"
+        return (
+            [json.loads(line) for line in path.read_text().splitlines()]
+            if path.exists()
+            else []
+        )
+
+    reply((FIXTURES / "herdr-status-server-running.json").read_text())
+    return reply, calls
+
+
 def printed(capsys):
     out = capsys.readouterr()
     return out.out.splitlines(), out.err
+
+
+STEP_LINES = [
+    "rigs-up: step 1 of 4: every rig is already running",
+    "rigs-up: step 2 of 4: the kernel is already running",
+    f"rigs-up: step 3 of 4: {NORMAL}",
+]
+
+
+def test_running_herdr_is_left_alone(fake_herdr, fake_rig, capfd):
+    _, herdr_calls = fake_herdr
+    _, rig_calls, execs = fake_rig
+    read_fd, write_fd = os.pipe()
+    os.write(write_fd, b"y\n")
+    os.close(write_fd)
+    old_fd = os.dup(0)
+    try:
+        os.dup2(read_fd, 0)
+        os.close(read_fd)
+        assert rigs_up.main(ARGS) == 0
+    finally:
+        os.dup2(old_fd, 0)
+        os.close(old_fd)
+    out, err = capfd.readouterr()
+    assert out.splitlines() == STEP_LINES + [
+        "rigs-up: step 4 of 4: told main-lead@hq the start is done; herdr is already running"
+    ]
+    assert err == ""
+    assert execs == []
+    assert herdr_calls() == [
+        {"args": ["status", "server", "--json"], "tty": False, "stdin": ""}
+    ]
+    body = rig_calls()[-1]["args"][-1]
+    assert re.fullmatch(
+        r"rigs-up finished at \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z: 17 seats running, 1 stopped on purpose \(advisor-lead@kernel\)\. herdr is already running, so it was left as it is\.",
+        body,
+    )
+
+
+def test_not_running_herdr_starts(fake_herdr, fake_rig, capfd):
+    reply, _ = fake_herdr
+    reply((FIXTURES / "herdr-status-server-not-running.json").read_text())
+    _, rig_calls, execs = fake_rig
+    assert rigs_up.main(ARGS) == 0
+    out, err = capfd.readouterr()
+    assert out.splitlines() == STEP_LINES + [
+        "rigs-up: step 4 of 4: told main-lead@hq the start is done; starting herdr"
+    ]
+    assert err == ""
+    assert execs == [["herdr"]]
+    assert rig_calls()[-1]["args"][-1].endswith(
+        "herdr is starting now. Please rename the herdr agents and check them."
+    )
+
+
+@pytest.mark.parametrize(
+    ("reply_text", "return_code"),
+    [
+        ((FIXTURES / "herdr-status-server-running.json").read_text(), 1),
+        ("status: running\nversion: 0.9.5\n", 0),
+        ("[]\n", 0),
+        ('{"running": 1}\n', 0),
+    ],
+)
+def test_herdr_status_other_results_start(
+    fake_herdr, fake_rig, monkeypatch, reply_text, return_code
+):
+    reply, _ = fake_herdr
+    reply(reply_text)
+    monkeypatch.setenv("FAKE_HERDR_RC", str(return_code))
+    _, _, execs = fake_rig
+    assert rigs_up.main(ARGS) == 0
+    assert execs == [["herdr"]]
+
+
+def test_herdr_status_that_is_not_utf8_starts(fake_herdr, fake_rig):
+    reply, _ = fake_herdr
+    reply((FIXTURES / "herdr-status-server-running.json").read_text().encode("utf-16"))
+    _, _, execs = fake_rig
+    assert rigs_up.main(ARGS) == 0
+    assert execs == [["herdr"]]
+
+
+def test_running_herdr_queue_failure(fake_herdr, fake_rig, capfd, monkeypatch):
+    _, _, execs = fake_rig
+    monkeypatch.setenv("FAKE_QUEUE_RC", "1")
+    assert rigs_up.main(ARGS) == 0
+    out, err = capfd.readouterr()
+    assert out.splitlines() == STEP_LINES + [
+        "rigs-up: step 4 of 4: couldn't tell main-lead@hq (rig queue create exited 1); herdr is already running"
+    ]
+    assert err == ""
+    assert execs == []
 
 
 def test_all_up_and_queue_message(fake_rig, capsys):
