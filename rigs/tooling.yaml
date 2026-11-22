@@ -8,7 +8,7 @@ managed_blocks:
 # the policy later, edit this line AND run `rig seat set-permissions <seat> --mode inherit` (or set
 # the new mode) on every existing seat, or the old choice stays.
 permission_policy: builtin:auto
-# Every Claude seat denies the question tool and plan mode (Mark's direction, 2026-11-20). Each opens a
+# Every Claude seat denies the question tool and plan mode (decided 2026-11-20). Each opens a
 # dialog nobody watches, and OpenRig won't type into one, so queued work sticks behind it. Existing
 # seats got the same list with `rig seat set-permissions <seat> --rules <file>`, which REPLACES a
 # seat's recorded rules: read `rig seat status` before changing them.
@@ -47,23 +47,5 @@ pods:
         startup:
           files:
             - path: startup/workflow-upkeep-rules.md
-              delivery_hint: send_text
-              required: true
-      # A read-only review seat (Mark's decision, 2026-11-21 22:55Z). It sits in this pod because
-      # decision 27 makes a pod a project and the review has no project of its own. It owns none of
-      # Workflow upkeep's work, and it denies the edit tools as well as the dialogs.
-      - id: migration-review
-        label: Migration review
-        agent_ref: "local:../agents/migration-review"
-        runtime: claude-code
-        profile: default
-        env:
-          AGENT_NAME: workflow-upkeep-migration-review
-        claude_permissions:
-          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode", "Edit", "Write", "NotebookEdit"]
-        cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-migration-review"
-        startup:
-          files:
-            - path: startup/workflow-upkeep-migration-review.md
               delivery_hint: send_text
               required: true
