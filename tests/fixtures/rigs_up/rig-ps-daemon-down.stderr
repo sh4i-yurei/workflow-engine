@@ -1,0 +1,3 @@
+Error: Daemon not running.
+  This command needs a running daemon.
+  Run 'rig up' (it auto-starts the daemon), or 'rig daemon start'.

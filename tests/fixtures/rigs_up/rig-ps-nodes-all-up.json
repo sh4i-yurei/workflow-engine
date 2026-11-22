@@ -1,0 +1,601 @@
+[
+    {
+        "rigId": "01M7Y365WMJ4YXTY58ANCJKCXE",
+        "rigName": "hq",
+        "logicalId": "main.lead",
+        "canonicalSessionName": "main-lead@hq",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-22T00:49:53.570Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": true,
+        "assignedWorkCount": 2,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.593Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7XDEYEY4MHBQ34Z6PA0GBP9",
+        "rigName": "kernel",
+        "logicalId": "advisor.lead",
+        "canonicalSessionName": "advisor-lead@kernel",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "seat-not-running"
+        },
+        "needsAttention": false,
+        "sessionStatus": "exited",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "detached",
+        "agentActivity": {
+            "state": "unknown"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.660Z",
+        "intentionallyStopped": true,
+        "storedSessionStatus": "exited"
+    },
+    {
+        "rigId": "01M7XDEYEY4MHBQ34Z6PA0GBP9",
+        "rigName": "kernel",
+        "logicalId": "operator.agent",
+        "canonicalSessionName": "operator-agent@kernel",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "codex",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "codex_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.018Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7XDEYEY4MHBQ34Z6PA0GBP9",
+        "rigName": "kernel",
+        "logicalId": "operator.human",
+        "canonicalSessionName": "operator-human@kernel",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "terminal",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "unsupported-runtime"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "running"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": null,
+        "resumeTokenPresent": false,
+        "lastActivity": "2026-11-22T00:50:31.869Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7XDEYEY4MHBQ34Z6PA0GBP9",
+        "rigName": "kernel",
+        "logicalId": "queue.worker",
+        "canonicalSessionName": "queue-worker@kernel",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "codex",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "codex_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.018Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7YC9GWYGFTH7AV3HDZ8J4M3",
+        "rigName": "operations",
+        "logicalId": "operations.owner",
+        "canonicalSessionName": "operations-owner@operations",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-21T23:54:17.025Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:25.010Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3BYX9EJ4KJBD6VGSHWAZ0",
+        "rigName": "platform",
+        "logicalId": "ansible-configuration-management.owner",
+        "canonicalSessionName": "ansible-configuration-management-owner@platform",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:24.011Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3BYX9EJ4KJBD6VGSHWAZ0",
+        "rigName": "platform",
+        "logicalId": "backups.owner",
+        "canonicalSessionName": "backups-owner@platform",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "unknown"
+        },
+        "hasAssignedWork": true,
+        "assignedWorkCount": 1,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.755Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3BYX9EJ4KJBD6VGSHWAZ0",
+        "rigName": "platform",
+        "logicalId": "infrastructure-as-code.owner",
+        "canonicalSessionName": "infrastructure-as-code-owner@platform",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.018Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3BYX9EJ4KJBD6VGSHWAZ0",
+        "rigName": "platform",
+        "logicalId": "nightly-issue-pipeline.owner",
+        "canonicalSessionName": "nightly-issue-pipeline-owner@platform",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:24.011Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3BYX9EJ4KJBD6VGSHWAZ0",
+        "rigName": "platform",
+        "logicalId": "staging-environment.owner",
+        "canonicalSessionName": "staging-environment-owner@platform",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": {
+            "status": "unknown",
+            "reason": "record-predates-current-occupant"
+        },
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:28.011Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3CTS3242GBT5WA5HVJ2Q2",
+        "rigName": "tooling",
+        "logicalId": "workflow-upkeep.owner",
+        "canonicalSessionName": "workflow-upkeep-owner@tooling",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-21T23:39:35.744Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:30.014Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3CTS3242GBT5WA5HVJ2Q2",
+        "rigName": "tooling",
+        "logicalId": "workflow-upkeep.rules",
+        "canonicalSessionName": "workflow-upkeep-rules@tooling",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-22T00:49:02.368Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": true,
+        "assignedWorkCount": 4,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.805Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3CTS3242GBT5WA5HVJ2Q2",
+        "rigName": "tooling",
+        "logicalId": "workflow-upkeep.migration-review",
+        "canonicalSessionName": "workflow-upkeep-migration-review@tooling",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-21T23:58:46.127Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:28.011Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3D064YSYQ86WXWWB4TG1W",
+        "rigName": "workflow-engine",
+        "logicalId": "workflow-engine.owner",
+        "canonicalSessionName": "workflow-engine-owner@workflow-engine",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-22T00:43:00.029Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.018Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3D064YSYQ86WXWWB4TG1W",
+        "rigName": "workflow-engine",
+        "logicalId": "work-system.owner",
+        "canonicalSessionName": "work-system-owner@workflow-engine",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-21T23:54:10.680Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:24.011Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3D064YSYQ86WXWWB4TG1W",
+        "rigName": "workflow-engine",
+        "logicalId": "openrig-team.owner",
+        "canonicalSessionName": "openrig-team-owner@workflow-engine",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-22T00:50:31.811Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "running"
+        },
+        "hasAssignedWork": true,
+        "assignedWorkCount": 3,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:32.863Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    },
+    {
+        "rigId": "01M7Y3D064YSYQ86WXWWB4TG1W",
+        "rigName": "workflow-engine",
+        "logicalId": "token-baseline-and-quick-wins.owner",
+        "canonicalSessionName": "token-baseline-and-quick-wins-owner@workflow-engine",
+        "hostSelfId": "host-f7ff83c5",
+        "runtime": "claude-code",
+        "model": null,
+        "modelObservation": [
+            "claude-opus-5-5",
+            "claude-assistant-response",
+            "2026-11-21T23:54:25.693Z"
+        ],
+        "needsAttention": false,
+        "sessionStatus": "running",
+        "startupStatus": "ready",
+        "oriented": "n-a",
+        "lifecycleState": "running",
+        "agentActivity": {
+            "state": "idle"
+        },
+        "hasAssignedWork": false,
+        "assignedWorkCount": 0,
+        "pendingWorkCount": 0,
+        "resumeType": "claude_id",
+        "resumeTokenPresent": true,
+        "lastActivity": "2026-11-22T00:50:23.006Z",
+        "intentionallyStopped": false,
+        "storedSessionStatus": "running",
+        "identityVerdict": {
+            "verdict": "verified",
+            "observedAt": "2026-11-22T00:50:31.686Z"
+        }
+    }
+]
