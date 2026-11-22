@@ -102,13 +102,16 @@ def fake_herdr(fake_rig, tmp_path, monkeypatch):
         "input_text = None if tty else sys.stdin.read()\n"
         "with (folder / 'herdr-calls').open('a') as log:\n"
         "    log.write(json.dumps({'args': sys.argv[1:], 'tty': tty, 'stdin': input_text}) + '\\n')\n"
-        "sys.stdout.write((folder / 'herdr-reply').read_text())\n"
+        "sys.stdout.buffer.write((folder / 'herdr-reply').read_bytes())\n"
         "sys.exit(int(os.environ.get('FAKE_HERDR_RC', '0')))\n"
     )
     binary.chmod(0o755)
 
     def reply(value):
-        (tmp_path / "herdr-reply").write_text(value)
+        if isinstance(value, bytes):
+            (tmp_path / "herdr-reply").write_bytes(value)
+        else:
+            (tmp_path / "herdr-reply").write_text(value)
 
     def calls():
         path = tmp_path / "herdr-calls"
@@ -195,6 +198,14 @@ def test_herdr_status_other_results_start(
     reply, _ = fake_herdr
     reply(reply_text)
     monkeypatch.setenv("FAKE_HERDR_RC", str(return_code))
+    _, _, execs = fake_rig
+    assert rigs_up.main(ARGS) == 0
+    assert execs == [["herdr"]]
+
+
+def test_herdr_status_that_is_not_utf8_starts(fake_herdr, fake_rig):
+    reply, _ = fake_herdr
+    reply((FIXTURES / "herdr-status-server-running.json").read_text().encode("utf-16"))
     _, _, execs = fake_rig
     assert rigs_up.main(ARGS) == 0
     assert execs == [["herdr"]]
