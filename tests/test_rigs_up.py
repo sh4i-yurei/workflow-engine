@@ -57,6 +57,7 @@ def fake_rig(tmp_path, monkeypatch):
         "    print('  advisor.lead: awaiting-decision — no session started.', file=sys.stderr)\n"
         "    sys.exit(int(os.environ.get('FAKE_UP_RC', '1')))\n"
         "elif args[:2] == ['queue', 'create']:\n"
+        "    print('Queue create request ID: qitem-20261122004930-1680a595ce40161d (not proof of persistence).')\n"
         "    sys.exit(int(os.environ.get('FAKE_QUEUE_RC', '0')))\n"
         "else:\n"
         "    sys.exit(3)\n"
@@ -163,10 +164,7 @@ def test_reboot_does_not_answer_advisor(fake_rig, capsys, monkeypatch):
         ["ps", "--nodes"],
         ["queue", "create"],
     ]
-    assert [(actual[i]["tty"], actual[i]["stdin"]) for i in (1, 3)] == [
-        (False, ""),
-        (False, ""),
-    ]
+    assert [(call["tty"], call["stdin"]) for call in actual] == [(False, "")] * 7
     assert execs == [["herdr"]]
     assert printed(capsys) == (
         [
@@ -431,3 +429,99 @@ def test_entrypoint(fake_rig, monkeypatch):
         runpy.run_path(str(ROOT / "tools/rigs_up.py"), run_name="__main__")
     assert error.value.code == 0
     assert execs == [["herdr"]]
+
+
+def test_exec_gets_full_argument_lists(fake_rig, monkeypatch):
+    full = []
+    monkeypatch.setattr(
+        os, "execvp", lambda file, args: full.append([file, list(args)])
+    )
+    assert rigs_up.main(ARGS) == 0
+    monkeypatch.delenv("CONTAINER_ID")
+    assert rigs_up.main(["--wait-seconds", "5"]) == 0
+    assert full == [
+        ["herdr", ["herdr"]],
+        [
+            "distrobox",
+            [
+                "distrobox",
+                "enter",
+                "dev",
+                "--",
+                str(ROOT / "tools/rigs_up.py"),
+                "--wait-seconds",
+                "5",
+            ],
+        ],
+    ]
+
+
+def test_host_reexec_without_arguments_forwards_sys_argv(fake_rig, monkeypatch):
+    full = []
+    monkeypatch.setattr(
+        os, "execvp", lambda file, args: full.append([file, list(args)])
+    )
+    monkeypatch.delenv("CONTAINER_ID")
+    monkeypatch.setattr(
+        sys, "argv", [str(ROOT / "tools/rigs_up.py"), "--wait-seconds", "7"]
+    )
+    assert rigs_up.main() == 0
+    assert full == [
+        [
+            "distrobox",
+            [
+                "distrobox",
+                "enter",
+                "dev",
+                "--",
+                str(ROOT / "tools/rigs_up.py"),
+                "--wait-seconds",
+                "7",
+            ],
+        ]
+    ]
+
+
+def test_queue_output_stays_off_the_terminal(fake_rig, capfd):
+    assert rigs_up.main(ARGS) == 0
+    out, err = capfd.readouterr()
+    assert out.splitlines() == [
+        "rigs-up: step 1 of 4: every rig is already running",
+        "rigs-up: step 2 of 4: the kernel is already running",
+        f"rigs-up: step 3 of 4: {NORMAL}",
+        "rigs-up: step 4 of 4: told main-lead@hq the start is done; starting herdr",
+    ]
+    assert err == ""
+
+
+def test_queue_message_time_is_utc(fake_rig, monkeypatch):
+    import re
+    import time
+    from datetime import datetime, timezone
+
+    _, calls, _ = fake_rig
+    with monkeypatch.context() as zone:
+        zone.setenv("TZ", "America/Chicago")
+        time.tzset()
+        before = datetime.now(timezone.utc).replace(microsecond=0)
+        assert rigs_up.main(ARGS) == 0
+        after = datetime.now(timezone.utc)
+    time.tzset()
+    body = calls()[-1]["args"][-1]
+    stamp = re.match(r"rigs-up finished at (\S+Z):", body).group(1)
+    made = datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    assert before <= made <= after
+
+
+def test_help_lines_name_their_options(fake_rig, capsys):
+    with pytest.raises(SystemExit):
+        rigs_up.main(["--help"])
+    output = " ".join(capsys.readouterr().out.split())
+    assert (
+        "--wait-seconds WAIT_SECONDS how long to wait for every seat, in seconds (default: 600)"
+        in output
+    )
+    assert (
+        "--poll-seconds POLL_SECONDS how often to check the seats, in seconds (default: 5)"
+        in output
+    )
