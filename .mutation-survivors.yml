@@ -35,3 +35,36 @@
     equals now minus the keep window to the microsecond. The run reads the real
     clock, so no input through the command line can make them equal; a test
     would have to pin the clock inside the module.
+- mutant: tools.rigs_up.x_read_seats__mutmut_5
+  reason: >-
+    With text=None the seat list arrives as bytes, and json.loads reads bytes
+    and text alike, so the seats and every printed line are the same.
+- mutant: tools.rigs_up.x_read_seats__mutmut_9
+  reason: >-
+    Dropping text=True delivers the seat list as bytes, and json.loads reads
+    bytes and text alike, so the seats and every printed line are the same.
+- mutant: tools.rigs_up.x_read_seats__mutmut_11
+  reason: >-
+    With text=False the seat list arrives as bytes, and json.loads reads bytes
+    and text alike, so the seats and every printed line are the same.
+- mutant: tools.rigs_up.x_read_seats__mutmut_13
+  reason: >-
+    The code returned beside a good seat list is never read: every caller
+    checks the list for None first and uses the code only when it is None.
+- mutant: tools.rigs_up.x_main__mutmut_70
+  reason: >-
+    down_seats treats every value other than "kernel" as "the rigs outside the
+    kernel", so "XXotherXX" selects the same seats as "other".
+- mutant: tools.rigs_up.x_main__mutmut_71
+  reason: >-
+    down_seats treats every value other than "kernel" as "the rigs outside the
+    kernel", so "OTHER" selects the same seats as "other".
+- mutant: tools.rigs_up.x_main__mutmut_112
+  reason: >-
+    False and None are both false in the only test of waiting_announced, and it
+    is set to True right after the waiting line prints.
+- mutant: tools.rigs_up.x_main__mutmut_140
+  reason: >-
+    `>=` and `>` differ only when the monotonic clock equals the deadline to the
+    nanosecond. The run reads the real clock, so no input through the command
+    line can make them equal; a test would have to pin the clock inside the module.
