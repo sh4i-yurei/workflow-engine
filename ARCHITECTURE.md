@@ -13,9 +13,9 @@ Three kinds of thing live here.
 The **team files** are data. Each file in `rigs/` is an OpenRig RigSpec for one team: its pods,
 one per project, and each pod's seats, with the seat's role, working folder, permission policy,
 denied tools and declared herdr name (`env: {AGENT_NAME: <name>}`). The files in `agents/` define
-the kinds of seat, the lead (`operator`), a project owner (`owner`) and a one-off read-only
-reviewer (`migration-review`), and the role text each one starts with. OpenRig reads these files
-when a team is brought up; nothing in this repository runs them.
+the two kinds of seat, the lead (`operator`) and a project owner (`owner`), and the role text each
+one starts with. OpenRig reads these files when a team is brought up; nothing in this repository
+runs them.
 
 This diagram shows how the team files become running seats. OpenRig's daemon reads them when a
 team is brought up, launches each seat as Claude Code in its own tmux session, and records the
