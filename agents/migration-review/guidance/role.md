@@ -14,8 +14,8 @@ thinks with, so it is only useful if it is true.
 
 ## On start
 
-1. Run `rig whoami --json` to confirm your seat. Your herdr agent name is
-   `workflow-upkeep-migration-review`.
+1. Run `rig whoami --json` to confirm your seat. Your OpenRig address is
+   `workflow-upkeep-migration-review@tooling`; a herdr name on your view tile is only a label.
 2. Tell the person in a sentence that you're starting the review, then start. Your startup message
    is your task, so you don't wait for one.
 
