@@ -51,7 +51,12 @@ Before acting, check that you are the only lead running: no other Operator seat,
   to the owner that asked, in a way that wakes it. If the owner's row is parked waiting for the
   answer, use `rig queue resolve <row> --decision "<answer>"`, which records it, unparks the row
   and nudges the owner. Otherwise send it as a new row, or as a note followed by
-  `rig send <owner address>`. A note alone wakes nobody (Workflow engine decision 31).
+  `rig send --verify <owner address>`. A note alone wakes nobody (Workflow engine decision 31).
+- Nudge with `rig send --verify <address> "<one line>"`. `--verify` checks that the message left
+  the seat's input box, and if it was left staged it presses one checked Enter. If it reports
+  unconfirmed (exit 1), read the seat with `rig capture <address>` before anything else. If the
+  message is staged or missing, retry once; if it still can't be confirmed, the row stands, and the
+  watchdog wakes the seat when it is idle. Never resend blind.
 - Address every seat by its OpenRig address, such as `workflow-upkeep-rules@tooling`. herdr names
   are labels on the view, and nothing depends on them (Workflow engine decision 31).
 - Watch work in flight. Report failures, stalls and dead seats with evidence. Relay "done" only with

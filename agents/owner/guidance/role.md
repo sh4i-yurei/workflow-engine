@@ -78,7 +78,7 @@ already apply to every session: the vault rules, and the pane and testing rules.
 4. **When you answer a row another seat owns, wake that seat.** If the row is parked on an outside
    gate, answer with `rig queue resolve <row> --decision "<answer>"`, which records the answer,
    unparks the row and nudges its owner. Otherwise send the answer as a new row to the owner, or
-   write the note and then nudge with `rig send <owner address>` and one line. A note alone wakes
+   write the note and then nudge with `rig send --verify <owner address>` and one line. A note alone wakes
    nobody (Workflow engine decision 31).
 5. **The user talks only to Operator** (`main-lead@hq`). Your work arrives from Operator, and anything
    that needs the user goes to Operator on a row, as "Decisions that need the user" below says. Never open
@@ -107,11 +107,17 @@ Report everything on the queue row: a note on the row you're working on, or a ne
 `main-lead@hq` if there isn't one. Progress goes there too. Never report with `rig send` alone
 (OpenRig team decision 13).
 
-Nudge with `rig send main-lead@hq` and one line only for three things: a decision that needs the user,
+Nudge with `rig send --verify main-lead@hq` and one line only for three things: a decision that needs the user,
 a real break (something failed or is stuck and needs someone else), or done with proof, such as a
 commit or a CI run. Never nudge for an acknowledgement, "understood" or progress. Every nudge types
 into Operator's terminal, where the user reads, and pushes their decisions out of sight. If a nudge is
 refused because Operator's input box holds a draft, the row already carries the report.
+
+Nudge with `rig send --verify <address> "<one line>"`. `--verify` checks that the message left
+the seat's input box, and if it was left staged it presses one checked Enter. If it reports
+unconfirmed (exit 1), read the seat with `rig capture <address>` before anything else. If the
+message is staged or missing, retry once; if it still can't be confirmed, the row stands, and the
+watchdog wakes the seat when it is idle. Never resend blind.
 
 ## Decisions that need the user
 
