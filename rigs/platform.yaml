@@ -48,23 +48,6 @@ pods:
             - path: startup/infrastructure-as-code.md
               delivery_hint: send_text
               required: true
-  - id: nightly-issue-pipeline
-    label: Nightly issue pipeline
-    members:
-      - id: owner
-        agent_ref: "local:../agents/owner"
-        runtime: claude-code
-        profile: default
-        env:
-          AGENT_NAME: nightly-issue-pipeline
-        claude_permissions:
-          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
-        cwd: "/var/home/sh4i_yurei/.openrig/workspace/platform/nightly-issue-pipeline"
-        startup:
-          files:
-            - path: startup/nightly-issue-pipeline.md
-              delivery_hint: send_text
-              required: true
   - id: staging-environment
     label: Staging environment
     members:
