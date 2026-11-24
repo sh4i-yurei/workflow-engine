@@ -12,6 +12,10 @@ permission_policy: builtin:auto
 # dialog nobody watches, and OpenRig won't type into one, so queued work sticks behind it. Existing
 # seats got the same list with `rig seat set-permissions <seat> --rules <file>`, which REPLACES a
 # seat's recorded rules: read `rig seat status` before changing them.
+# Every Claude seat also denies the claude.ai productivity connectors (Workflow engine decision 40,
+# 2026-11-24): Gmail, Google Calendar, Indeed, Notion and Claude Docs, and Google Drive everywhere
+# but Operator. They belong to a secretary role, which leaves them out. A deny rule hides the tools
+# but doesn't stop the connector: it still connects, and its server instructions still load.
 
 pods:
   - id: workflow-upkeep
@@ -37,7 +41,16 @@ pods:
             - "Bash(vault-run --env GH_TOKEN -- gh api --method PUT repos/sh4i-yurei/*/rulesets/*)"
             - "Bash(vault-run --env GH_TOKEN -- gh api --method PUT repos/sh4i-yurei/*/branches/*/protection*)"
             - "Bash(vault-run --env GH_TOKEN -- gh api --method PATCH repos/sh4i-yurei/*/branches/*/protection/required_status_checks*)"
-          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+          deny:
+            - AskUserQuestion
+            - EnterPlanMode
+            - ExitPlanMode
+            - mcp__claude_ai_Gmail
+            - mcp__claude_ai_Google_Calendar
+            - mcp__claude_ai_Indeed
+            - mcp__claude_ai_Notion
+            - mcp__claude_ai_Claude_Docs
+            - mcp__claude_ai_Google_Drive
         claude_auto_mode:
           allow:
             - "$defaults"
@@ -56,7 +69,16 @@ pods:
         env:
           AGENT_NAME: workflow-upkeep-rules
         claude_permissions:
-          deny: ["AskUserQuestion", "EnterPlanMode", "ExitPlanMode"]
+          deny:
+            - AskUserQuestion
+            - EnterPlanMode
+            - ExitPlanMode
+            - mcp__claude_ai_Gmail
+            - mcp__claude_ai_Google_Calendar
+            - mcp__claude_ai_Indeed
+            - mcp__claude_ai_Notion
+            - mcp__claude_ai_Claude_Docs
+            - mcp__claude_ai_Google_Drive
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-rules"
         startup:
           files:
