@@ -30,10 +30,11 @@ need is written down.
 6. Read the build specs and review notes in `05_Agents/handoffs/` that your open rows name. The
    older handoff notes there are an archive, and you don't read them on start (Workflow engine
    decision 31).
-7. Wait for work. Nobody watches your terminal, so there is nobody there to tell what you found. If
-   your start found something that needs someone else, such as a run that was cut off or a row you
-   can't carry on, report it on a row to `main-lead@hq`, as "Reporting to Operator" says. Start
-   nothing on your own.
+7. Start on your ready rows, as "How work flows" says, and wait for work only when none is ready.
+   Nobody watches your terminal, so there is nobody there to tell what you found. If your start
+   found something that needs someone else, such as a run that was cut off or a row you can't
+   carry on, report it on a row to `main-lead@hq`, as "Reporting to Operator" says. Start nothing
+   that no row asks for.
 
 ## How work flows
 
@@ -67,7 +68,15 @@ already apply to every session: the vault rules, and the pane and testing rules.
    never a long wait or a background job. Watch each job. As soon as it finishes, record its result
    on the row or buildlog that owns it and close your pane. A tab closes with its last pane, and
    you never touch another seat's panes.
-3. **Requests between seats go on the queue,** with
+3. **While a job runs, start the next independent one.** Your ready work is every open row you own
+   (`rig queue list --owned`) that isn't blocked or parked on someone else. Once a job is running,
+   start the next ready job that doesn't need its result, in its own pane by the rules above, and
+   carry on until nothing ready is left; only then wait on your panes. Never sit idle while ready
+   work exists, because a seat waiting on one pane leaves its other rows waiting for hours. Two jobs
+   that write the same files or the same decision never run at once: the second waits for the
+   first. The build loop's limits on Codex builders still apply: at most two per orchestrator, and
+   none started while four are working machine-wide.
+4. **Requests between seats go on the queue,** with
    `rig queue create --destination <OpenRig address>`. Every queue task you create carries two
    tags: `project:<slug>`, the project note's file name in lower case with hyphens, and
    `item:<id>`, the Next item number or a short hyphenated name, for example
@@ -75,20 +84,20 @@ already apply to every session: the vault rules, and the pane and testing rules.
    project, because the queue has no text search (OpenRig team decision 16). Address every seat by
    its OpenRig address, never by a herdr name. A change that touches another project's decisions
    needs that project's owner to agree first.
-4. **When you answer a row another seat owns, wake that seat.** If the row is parked on an outside
+5. **When you answer a row another seat owns, wake that seat.** If the row is parked on an outside
    gate, answer with `rig queue resolve <row> --decision "<answer>"`, which records the answer,
    unparks the row and nudges its owner. Otherwise send the answer as a new row to the owner, or
    write the note and then nudge with `rig send --verify <owner address>` and one line. A note alone wakes
    nobody (Workflow engine decision 31).
-5. **The user talks only to Operator** (`main-lead@hq`). Your work arrives from Operator, and anything
+6. **The user talks only to Operator** (`main-lead@hq`). Your work arrives from Operator, and anything
    that needs the user goes to Operator on a row, as "Decisions that need the user" below says. Never open
    a question dialog, and never ask the user directly.
-6. **GitHub text describes the change, the problem and the reason.** That covers commit messages,
+7. **GitHub text describes the change, the problem and the reason.** That covers commit messages,
    pull request titles and descriptions, issue bodies and comments, and review comments. It never
    mentions the user or any agent or AI, and it never carries attribution lines such as
    `Co-authored-by` or "Generated with". Names that are part of the code or configuration, such as
    a seat address in a team file, are identifiers and stay.
-7. **Scratch files and memories need no asking.** Remove scratch files once the work they served
+8. **Scratch files and memories need no asking.** Remove scratch files once the work they served
    is recorded in a commit, a note or a buildlog. A memory never holds a secret.
 
 ## When your project has more than one seat

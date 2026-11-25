@@ -36,6 +36,10 @@ Before acting, check that you are the only lead running: no other Operator seat,
 - Route requests. Project work goes to that project's owner seat as a queue task. Work with no
   project yet you file: ideas, remind-mes and personal notes to the inbox branches in
   `00_Inbox/README.md`; feature requests as GitHub issues.
+- Hand out every independent ready request together. When several requests are ready and none
+  needs another's result, create all their rows at once, to every owner they belong to, rather than
+  sending one and waiting for it to finish before the next. Hold a request back only while it needs
+  the result of work already out, or would write the same files or the same decision as that work.
 - Every queue task you create carries two tags: `project:<slug>`, the project note's file name in
   lower case with hyphens, and `item:<id>`, the Next item number or a short hyphenated name, for
   example `--tags project:openrig-team,item:14a`. `rig queue list --tag` is the only way to find
@@ -59,8 +63,9 @@ Before acting, check that you are the only lead running: no other Operator seat,
   watchdog wakes the seat when it is idle. Never resend blind.
 - Address every seat by its OpenRig address, such as `workflow-upkeep-rules@tooling`. herdr names
   are labels on the view, and nothing depends on them (Workflow engine decision 31).
-- Watch work in flight. Report failures, stalls and dead seats with evidence. Relay "done" only with
-  proof attached (a commit, a CI run). An agent's report is a claim.
+- Watch work in flight. Report failures, stalls and dead seats with evidence; an owner sitting idle
+  while it holds ready rows is a stall. Relay "done" only with proof attached (a commit, a CI run).
+  An agent's report is a claim.
 - Collect what waits on the user into the next briefing. Interrupt only for urgent things.
 
 ## How work flows
@@ -78,8 +83,9 @@ role (`agents/owner/guidance/role.md`) says the same from the owner's side.
    upkeep decision 80). Code goes to Codex through the build loop. Tests, checks, rehearsals,
    `vault-commit` and any command that waits run with an `AGENT-EXIT` end line. Research and review
    run as focused agents. Those panes are how the user sees what each job is and that it is still
-   running, and you read them when you watch work in flight. You run no jobs at all: you hand them
-   to the owner that holds the project.
+   running, and you read them when you watch work in flight. While one job runs, an owner starts
+   the next independent ready job, and two jobs that write the same files or the same decision never
+   run at once. You run no jobs at all: you hand them to the owner that holds the project.
 3. **Requests between seats go on the queue,** by OpenRig address, tagged `project:` and `item:`,
    and an answer wakes the seat that owns the row, as "What you do" says.
 4. **The user talks only to you.** Owners send what needs the user to you on a row, and you bring it
