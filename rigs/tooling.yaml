@@ -23,6 +23,14 @@ permission_policy: builtin:auto
 # post, reference and manual folders and on ~/Documents/worktrees. Edit rules cover every built-in
 # file tool and the Bash file commands Claude Code recognises; paths are ~/-anchored, because a
 # /path rule resolves against the settings file's folder.
+# Every Claude seat also denies edits to the files that set its own permissions and guidance, and
+# the command that records seat rules (decided 2026-11-25). One seat keeps each:
+# - ~/.claude/settings.json and settings.local.json: the token baseline seat.
+# - the team files and agent specs in ~/Documents/workflow-engine, ~/.openrig/*.json and each
+#   seat's .claude folder under ~/.openrig/workspace: the OpenRig team seat. The workflow engine
+#   seat also keeps the team files and agent specs, because it edits the role files there.
+# - ~/.claude/CLAUDE.md: the workflow upkeep rules seat.
+# - rig seat set-permissions: the OpenRig team seat, which applies merged team files to seats.
 
 pods:
   - id: workflow-upkeep
@@ -68,6 +76,14 @@ pods:
             - "Edit(~/Documents/**/*.rs)"
             - "Edit(~/Documents/**/.github/workflows/**)"
             - "Edit(~/.claude/hooks/**)"
+            - "Edit(~/.claude/settings.json)"
+            - "Edit(~/.claude/settings.local.json)"
+            - "Edit(~/Documents/workflow-engine/rigs/**)"
+            - "Edit(~/Documents/workflow-engine/agents/**)"
+            - "Edit(~/.openrig/*.json)"
+            - "Edit(~/.openrig/workspace/**/.claude/**)"
+            - "Edit(~/.claude/CLAUDE.md)"
+            - "Bash(rig seat set-permissions *)"
         claude_auto_mode:
           allow:
             - "$defaults"
@@ -106,6 +122,13 @@ pods:
             - "Edit(~/Documents/**/*.rs)"
             - "Edit(~/Documents/**/.github/workflows/**)"
             - "Edit(~/.claude/hooks/**)"
+            - "Edit(~/.claude/settings.json)"
+            - "Edit(~/.claude/settings.local.json)"
+            - "Edit(~/Documents/workflow-engine/rigs/**)"
+            - "Edit(~/Documents/workflow-engine/agents/**)"
+            - "Edit(~/.openrig/*.json)"
+            - "Edit(~/.openrig/workspace/**/.claude/**)"
+            - "Bash(rig seat set-permissions *)"
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/tooling/workflow-upkeep-rules"
         startup:
           files:
