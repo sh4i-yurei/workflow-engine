@@ -16,6 +16,13 @@ permission_policy: builtin:auto
 # 2026-11-24): Gmail, Google Calendar, Indeed, Notion and Claude Docs, and Google Drive everywhere
 # but Operator. They belong to a secretary role, which leaves them out. A deny rule hides the tools
 # but doesn't stop the connector: it still connects, and its server instructions still load.
+# Every Claude seat denies the Agent tool (decided 2026-11-25), so research and review run as
+# labelled jobs in panes and never as hidden subagents. Each owner seat also denies Edit on code
+# under ~/Documents (.py, .sh, .js, .ts, .go, .rs), on GitHub workflow files and on ~/.claude/hooks,
+# because Codex writes code. Operator instead denies Edit on the vault's project, buildlog, agent,
+# post, reference and manual folders and on ~/Documents/worktrees. Edit rules cover every built-in
+# file tool and the Bash file commands Claude Code recognises; paths are ~/-anchored, because a
+# /path rule resolves against the settings file's folder.
 
 pods:
   - id: main
@@ -39,4 +46,12 @@ pods:
             - mcp__claude_ai_Indeed
             - mcp__claude_ai_Notion
             - mcp__claude_ai_Claude_Docs
+            - Agent
+            - "Edit(~/Documents/Second_Brain/10_Projects/**)"
+            - "Edit(~/Documents/Second_Brain/20_Buildlogs/**)"
+            - "Edit(~/Documents/Second_Brain/05_Agents/**)"
+            - "Edit(~/Documents/Second_Brain/30_Posts/**)"
+            - "Edit(~/Documents/Second_Brain/40_Reference/**)"
+            - "Edit(~/Documents/Second_Brain/60_Operational_Manual/**)"
+            - "Edit(~/Documents/worktrees/**)"
         cwd: "/var/home/sh4i_yurei/.openrig/workspace/hq/main"
