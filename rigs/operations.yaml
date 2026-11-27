@@ -78,13 +78,16 @@ pods:
             - path: startup/operations.md
               delivery_hint: send_text
               required: true
+  - id: operations-project
+    label: Operations project
+    members:
       - id: manager
         label: Operations project manager
         agent_ref: "local:../agents/project-manager"
         runtime: claude-code
         profile: default
         env:
-          AGENT_NAME: operations-manager
+          AGENT_NAME: operations-project-manager
         claude_permissions:
           deny:
             - AskUserQuestion
@@ -114,7 +117,7 @@ pods:
             - "Edit(~/.openrig/workspace/**/.claude/**)"
             - "Edit(~/.claude/CLAUDE.md)"
             - "Bash(rig seat set-permissions *)"
-        cwd: "/var/home/sh4i_yurei/.openrig/workspace/operations/operations-manager"
+        cwd: "/var/home/sh4i_yurei/.openrig/workspace/operations/operations-project"
         startup:
           files:
             - path: startup/operations-manager.md
