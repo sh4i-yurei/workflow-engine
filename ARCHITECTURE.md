@@ -10,12 +10,16 @@ upkeep project note (decision 80).
 
 Three kinds of thing live here.
 
-The **team files** are data. Each file in `rigs/` is an OpenRig RigSpec for one team: its pods,
-one per project, and each pod's seats, with the seat's role, working folder, permission policy,
-denied tools and declared herdr name (`env: {AGENT_NAME: <name>}`). The files in `agents/` define
-the two kinds of seat, the lead (`operator`) and a project owner (`owner`), and the role text each
-one starts with. OpenRig reads these files when a team is brought up; nothing in this repository
-runs them.
+The **team files** are data. Each file in `rigs/` is an OpenRig RigSpec for one team: a program,
+a board's projects in no program, or the service owners. Its pods are one per project or domain,
+plus a program manager's pod in a program's team, and each pod's seats carry the seat's role,
+working folder, permission policy, denied tools and declared herdr name
+(`env: {AGENT_NAME: <name>}`). The folders in `agents/` define each kind of agent (Workflow engine
+decision 49, Work system decision 28): Operator, the program manager, the project manager and the
+service owner for seats, and the builder, reviewer, investigator and specialist for workers. Each
+folder holds the kind's agent spec, its role text and its own Claude settings file. A spec can hold
+several profiles, so the program manager has one per program and the service owner one per domain.
+OpenRig reads these files when a team is brought up; nothing in this repository runs them.
 
 This diagram shows how the team files become running seats. OpenRig's daemon reads them when a
 team is brought up, launches each seat as Claude Code in its own tmux session, and records the
@@ -49,7 +53,7 @@ flowchart TB
 ```
 
 The **team-view step** is code, still to be built (OpenRig team decision 14). It makes each team's
-herdr space look the way the team files say it should: one workspace per team, the owners' tiles
+herdr space look the way the team files say it should: one workspace per team, the seats' tiles
 in tabs of at most four with readable names, and every agent tile named with its declared name.
 It reads the team files and herdr's current state, works out what is missing, and asks herdr and
 OpenRig to make the changes. It runs after every power-on and whenever a team's view is needed,
@@ -142,28 +146,30 @@ flowchart TB
 
 ## How work moves between seats
 
-The user talks to one seat, the lead, `main-lead@hq`. Each project has an owner seat, one per
-workstream where a project has several, which leads and orchestrates that project's work.
-Requests between seats travel on OpenRig's queue, addressed by OpenRig address and tagged with the
-project and item, and a `rig send` nudge wakes the seat that owns a row. An owner doesn't do jobs
-in its own session. Each job, whether a Codex build through the build loop, a test run, a CI
-rehearsal or a review, runs in its own labelled pane in the team's shared `jobs` tabs
-in herdr, and ends with an `AGENT-EXIT` line that the owner waits on. The owner records the result
-on the row, closes the pane, and nudges the lead only for a decision, a break, or work done with
-proof.
+The user talks to one seat, Operator, `main-lead@hq`. Each active project has a project manager,
+which runs that project's work, and each domain's running systems have a service owner. A program
+manager keeps each program's charter and roadmap, and isn't on the path between them. Project
+managers and service owners consult each other directly (Workflow engine decision 49). Requests
+between seats travel on OpenRig's queue, addressed by OpenRig address and tagged with the project
+and item, and a `rig send` nudge wakes the seat that owns a row. A stopped seat isn't woken by a
+row, so whoever sends it work starts it first with `rig launch`. A manager doesn't do jobs in its
+own session. Each job, whether a Codex build through the build loop, a test run, a CI rehearsal or
+a review, runs in its own labelled pane in the team's shared `jobs` tabs in herdr, and ends with
+an `AGENT-EXIT` line that the manager waits on. The manager records the result on the row, closes
+the pane, and nudges Operator only for a decision, a break, or work done with proof.
 
-This diagram follows one request from the user to an owner's job pane and back.
+This diagram follows one request from the user to a project manager's job pane and back.
 
 ```mermaid
 sequenceDiagram
   actor U as User
   participant Op as Operator seat<br/>main-lead@hq
   participant Q as OpenRig queue
-  participant Ow as Owner seat
-  participant J as Owner's job pane in<br/>the team's jobs tab
+  participant Ow as Project manager seat
+  participant J as Its job pane in<br/>the team's jobs tab
   U->>Op: a request
   Op->>Q: rig queue create, tagged project and item
-  Q-->>Ow: nudge typed into the owner's terminal
+  Q-->>Ow: nudge typed into the manager's terminal
   Ow->>Q: rig queue claim
   Ow->>J: start the job (Codex build, checks, rehearsal, review)
   J-->>Ow: AGENT-EXIT line with the exit code
@@ -178,7 +184,7 @@ sequenceDiagram
 | Piece | Responsibility | Interface | Depends on | How it fails | Must not |
 |---|---|---|---|---|---|
 | `rigs/*.yaml` | Define each team, its seats and each seat's herdr name | OpenRig RigSpec 0.2, checked with `rig spec validate` | `agents/` | `rig spec validate` names the bad field | hold secrets; name a seat outside herdr's rule `[a-z][a-z0-9_-]{0,31}` |
-| `agents/` | Define the lead and the owner seat kinds and their role text | OpenRig agent specs | OpenRig's shared agent spec | `rig up` refuses a missing or invalid spec | carry one project's details; those go in the team file's startup file |
+| `agents/` | Define each kind of agent, its role text and its Claude settings file | OpenRig agent specs | OpenRig's shared agent spec | `rig up` refuses a missing or invalid spec | carry one project's details; those go in the team file's startup file |
 | Team reader (planned) | Turn the team files into a list of teams, each with its seats' sessions, labels and names | a function returning plain data | PyYAML | raises on a file that isn't valid YAML or lacks a field it needs | run a command, or read anything but `rigs/` |
 | herdr reader (planned) | Take a snapshot of herdr: workspaces, tabs, panes, agent names, and which seat each tile attaches to | a function returning plain data | the `herdr` CLI's JSON output | raises when herdr can't be reached or answers in a shape it doesn't know | change anything in herdr |
 | Planner (planned) | Compare the teams with the snapshot and list the actions that close the gap | a pure function, teams plus snapshot in, actions out | nothing | it can't fail at run time; a team it can't place is reported as an action that needs a person | call a command, read a file, or plan any change to a team's shared `jobs` tabs |

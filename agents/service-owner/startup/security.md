@@ -1,0 +1,1 @@
+Your domain is Security. Its systems are the rows whose Domain is Security in the table in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.

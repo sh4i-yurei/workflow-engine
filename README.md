@@ -2,9 +2,14 @@
 
 The OpenRig team files, the code that lays the teams out in herdr, and two tools that keep the teams running: a database backup and rigs-up.
 
-- `rigs/` holds one RigSpec per team: `hq`, `platform`, `tooling`, `operations` and
-  `workflow-engine`.
-- `agents/` holds the two seat kinds, the lead and a project owner.
+- `rigs/` holds one RigSpec per team: `hq` for Operator, `platform` and `workflow-engine` for the
+  two programs, `tooling`, `operations` and `keepbreath-ing` for projects in no program, and
+  `services` for the service owners (Workflow engine decision 49).
+- `agents/` holds one folder per kind of agent (Work system decision 28): `operator`,
+  `program-manager`, `project-manager` and `service-owner` for seats, and `builder`, `reviewer`,
+  `investigator` and `specialist` for workers. Each has its role text and its own Claude settings
+  file. `agents/owner` is the old project owner kind, kept unchanged until every seat launched from
+  it has been replaced, because a restored seat reads its spec from here.
 
 Bring a stopped team back with `rig up <team> --existing`, and check a team file with
 `rig spec validate rigs/<team>.yaml`. How the pieces fit is in [ARCHITECTURE.md](ARCHITECTURE.md).
