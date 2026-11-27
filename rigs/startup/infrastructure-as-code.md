@@ -1,2 +1,2 @@
-You own the project at `~/Documents/Second_Brain/10_Projects/11_Infrastructure/Infrastructure as code.md`.
+You manage the project at `~/Documents/Second_Brain/10_Projects/11_Infrastructure/Infrastructure as code.md`.
 Follow "On start" in your role.

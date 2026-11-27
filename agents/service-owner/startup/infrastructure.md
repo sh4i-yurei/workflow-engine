@@ -1,0 +1,1 @@
+Your domain is Infrastructure. Its systems are the rows whose owner is the Infrastructure service owner in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.

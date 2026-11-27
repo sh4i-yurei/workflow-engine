@@ -1,0 +1,97 @@
+name: service-owner
+version: "1.0"
+description: "Service owner: owns the running systems of one domain and answers for them (Workflow engine decision 49)"
+
+defaults:
+  runtime: claude-code
+
+imports:
+  - ref: path:/var/home/sh4i_yurei/.npm-global/lib/node_modules/@openrig/cli/daemon/specs/agents/shared
+
+profiles:
+  infrastructure:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+    startup:
+      files:
+        - path: startup/infrastructure.md
+          delivery_hint: send_text
+          required: true
+      actions: []
+  agent-platform:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+    startup:
+      files:
+        - path: startup/agent-platform.md
+          delivery_hint: send_text
+          required: true
+      actions: []
+  ai-and-data:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+    startup:
+      files:
+        - path: startup/ai-and-data.md
+          delivery_hint: send_text
+          required: true
+      actions: []
+  security:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+    startup:
+      files:
+        - path: startup/security.md
+          delivery_hint: send_text
+          required: true
+      actions: []
+  websites:
+    uses:
+      skills: []
+      guidance: []
+      subagents: []
+      plugins: [shared:openrig-core]
+      runtime_resources: [shared:claude-activity-hooks]
+    startup:
+      files:
+        - path: startup/websites.md
+          delivery_hint: send_text
+          required: true
+      actions: []
+
+resources:
+  guidance:
+    - id: role
+      path: guidance/role.md
+  # The role's own Claude settings (Work system decision 28). Declared but not selected in any
+  # profile yet, so no seat loads it until a later change wires it in; the runner will put the
+  # same file in each worker's folder.
+  runtime_resources:
+    - id: role-settings
+      path: runtime/claude-settings.fragment.json
+      runtime: claude-code
+      type: claude_settings_fragment
+
+startup:
+  files:
+    - path: guidance/role.md
+      orientation: role
+      delivery_hint: send_text
+      required: true
+  actions: []

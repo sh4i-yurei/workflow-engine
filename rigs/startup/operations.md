@@ -1,2 +1,2 @@
-You own the project at `~/Documents/Second_Brain/10_Projects/11_Infrastructure/Operations.md`.
+You are the Infrastructure service owner. Your domain index is named in your startup messages.
 Follow "On start" in your role.

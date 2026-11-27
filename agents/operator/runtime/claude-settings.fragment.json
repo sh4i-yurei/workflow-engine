@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "deny": [
+      "mcp__claude_ai_Gmail",
+      "mcp__claude_ai_Google_Calendar",
+      "mcp__claude_ai_Indeed",
+      "mcp__claude_ai_Notion",
+      "mcp__claude_ai_Claude_Docs",
+      "Agent",
+      "Workflow",
+      "Edit(~/Documents/Second_Brain/10_Projects/**)",
+      "Edit(~/Documents/Second_Brain/20_Buildlogs/**)",
+      "Edit(~/Documents/Second_Brain/05_Agents/**)",
+      "Edit(~/Documents/Second_Brain/30_Posts/**)",
+      "Edit(~/Documents/Second_Brain/40_Reference/**)",
+      "Edit(~/Documents/Second_Brain/60_Operational_Manual/**)",
+      "Edit(~/Documents/worktrees/**)",
+      "Edit(~/.claude/settings.json)",
+      "Edit(~/.claude/settings.local.json)",
+      "Edit(~/Documents/workflow-engine/rigs/**)",
+      "Edit(~/Documents/workflow-engine/agents/**)",
+      "Edit(~/.openrig/*.json)",
+      "Edit(~/.openrig/workspace/**/.claude/**)",
+      "Edit(~/.claude/CLAUDE.md)",
+      "Bash(rig seat set-permissions *)"
+    ]
+  }
+}

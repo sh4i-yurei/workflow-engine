@@ -1,6 +1,6 @@
 version: "0.2"
 name: hq
-summary: Operator, the lead the user talks to
+summary: Operator, the one agent the user talks to (Workflow engine decision 49)
 managed_blocks:
   claude-code: CLAUDE.local.md
 # Claude seats run in auto mode (OpenRig team note, decided 2026-11-20). Existing seats also got
@@ -17,12 +17,12 @@ permission_policy: builtin:auto
 # but Operator. They belong to a secretary role, which leaves them out. A deny rule hides the tools
 # but doesn't stop the connector: it still connects, and its server instructions still load.
 # Every Claude seat denies the Agent and Workflow tools (decided 2026-11-25), so research and review
-# run as labelled jobs in panes and never as hidden agents. Each owner seat also denies Edit on code
-# under ~/Documents (.py, .sh, .js, .ts, .go, .rs), on GitHub workflow files and on ~/.claude/hooks,
-# because Codex writes code. Operator instead denies Edit on the vault's project, buildlog, agent,
-# post, reference and manual folders and on ~/Documents/worktrees. Edit rules cover every built-in
-# file tool and the Bash file commands Claude Code recognises; paths are ~/-anchored, because a
-# /path rule resolves against the settings file's folder.
+# run as labelled jobs in panes and never as hidden agents. Each manager and service owner seat also
+# denies Edit on code under ~/Documents (.py, .sh, .js, .ts, .go, .rs), on GitHub workflow files and
+# on ~/.claude/hooks, because Codex writes code. Operator instead denies Edit on the vault's
+# project, buildlog, agent, post, reference and manual folders and on ~/Documents/worktrees. Edit
+# rules cover every built-in file tool and the Bash file commands Claude Code recognises; paths are
+# ~/-anchored, because a /path rule resolves against the settings file's folder.
 # Every Claude seat also denies edits to the files that set its own permissions and guidance, and
 # the command that records seat rules (decided 2026-11-25). One seat keeps each:
 # - ~/.claude/settings.json and settings.local.json: the token baseline seat.

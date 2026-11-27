@@ -1,6 +1,6 @@
 name: operator
 version: "1.0"
-description: "Operator, the lead the user talks to: briefs, routes and tracks work"
+description: "Operator, the one agent the user talks to: briefs, routes and tracks work (Workflow engine decision 49)"
 
 defaults:
   runtime: claude-code
@@ -21,6 +21,13 @@ resources:
   guidance:
     - id: role
       path: guidance/role.md
+  # The role's own Claude settings (Work system decision 28). Declared but not selected in the
+  # profile yet, so the seat doesn't load it until a later change wires it in.
+  runtime_resources:
+    - id: role-settings
+      path: runtime/claude-settings.fragment.json
+      runtime: claude-code
+      type: claude_settings_fragment
 
 startup:
   files:
