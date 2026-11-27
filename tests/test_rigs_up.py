@@ -782,6 +782,19 @@ def test_never_started_marked_stopped(fake_rig, capsys):
     assert err == ""
 
 
+def test_two_never_started_seats_are_sorted_and_joined(fake_rig, capsys):
+    set_responses, _, _ = fake_rig
+    set_responses(ALL_UP + [NEVER, dict(NEVER, logicalId="another.owner")])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert (
+        "rigs-up: step 3 of 4: 17 seats running, 1 stopped on purpose "
+        "(advisor-lead@kernel), 2 recorded and never started "
+        "(another.owner@oq-rigsup-fields, never.owner@oq-rigsup-fields)"
+    ) in lines
+    assert err == ""
+
+
 def test_queue_message_time_is_utc(fake_rig, monkeypatch):
     import re
     import time
