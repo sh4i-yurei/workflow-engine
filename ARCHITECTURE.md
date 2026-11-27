@@ -112,8 +112,9 @@ It brings every team back in the only order that works: OpenRig first, then the 
 its stopped advisor, then a wait until every seat is up, and herdr last, because a herdr tile whose
 seat isn't up fails instead of waiting. It judges what to start and when it's done from OpenRig's
 own record of each seat, `rig ps --nodes -A --json`, including which seats were stopped on
-purpose. So it holds no list of teams or seats, and running it twice starts nothing the second
-time. herdr is started only when `herdr status server --json` doesn't report `"running": true`;
+purpose and which were recorded but never started. So it holds no list of teams or seats, and
+running it twice starts nothing the second time. herdr is started only when
+`herdr status server --json` doesn't report `"running": true`;
 a running herdr is left alone rather than given another client. At login, the desktop autostart
 entry `autostart/rigs-up.desktop` opens a Ghostty window that runs it, so after a power-off nothing
 has to be typed.
@@ -129,10 +130,10 @@ flowchart TB
   other -->|"no"| kernel{{"A kernel seat down?"}}
   start --> kernel
   kernel -->|"yes"| up["rig up kernel --existing<br/>input from /dev/null"]
-  kernel -->|"no"| wait["Wait until every seat<br/>not stopped on purpose<br/>is running and ready"]
+  kernel -->|"no"| wait["Wait until every seat<br/>not stopped on purpose<br/>or never started<br/>is running and ready"]
   up --> wait
   wait -->|"time runs out"| fail["Exit 1, naming the step;<br/>herdr not started"]
-  wait -->|"rig queue create"| tell["Queue task to<br/>main-lead@hq"]
+  wait -->|"rig queue create"| tell["Queue task to<br/>Operator's address<br/>from rig config"]
   tell --> h{{"herdr already running?"}}
   h -->|"no"| exec["exec herdr"]
   h -->|"yes"| leave["Done; herdr<br/>left as it is"]

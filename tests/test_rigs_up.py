@@ -13,10 +13,16 @@ from tools import rigs_up
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests/fixtures/rigs_up"
 ALL_UP = json.loads((FIXTURES / "rig-ps-nodes-all-up.json").read_text())
+NEVER = json.loads((FIXTURES / "rig-ps-never-started-seat.json").read_text())
 DAEMON_DOWN = {"error": True}
 ARGS = ["--wait-seconds", "2", "--poll-seconds", "0"]
 STOPPED = "advisor-lead@kernel"
 NORMAL = "17 seats running, 1 stopped on purpose (advisor-lead@kernel)"
+STEP3N = (
+    "rigs-up: step 3 of 4: 17 seats running, 1 stopped on purpose "
+    "(advisor-lead@kernel), 1 recorded and never started "
+    "(never.owner@oq-rigsup-fields)"
+)
 
 
 def changed(names, **values):
@@ -56,6 +62,9 @@ def fake_rig(tmp_path, monkeypatch):
         "elif args == ['up', 'kernel', '--existing']:\n"
         "    print('  advisor.lead: awaiting-decision — no session started.', file=sys.stderr)\n"
         "    sys.exit(int(os.environ.get('FAKE_UP_RC', '1')))\n"
+        "elif args == ['config', 'get', 'agents.operator_session']:\n"
+        "    print(os.environ.get('FAKE_OPERATOR', 'main-lead@hq'))\n"
+        "    sys.exit(int(os.environ.get('FAKE_CONFIG_RC', '0')))\n"
         "elif args[:2] == ['queue', 'create']:\n"
         "    print('Queue create request ID: qitem-20261122004930-1680a595ce40161d (not proof of persistence).')\n"
         "    sys.exit(int(os.environ.get('FAKE_QUEUE_RC', '0')))\n"
@@ -230,10 +239,11 @@ def test_all_up_and_queue_message(fake_rig, capsys):
     assert [call["args"][:2] for call in actual] == [
         ["ps", "--nodes"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
     assert actual[0]["args"] == actual[1]["args"] == ["ps", "--nodes", "-A", "--json"]
-    queue = actual[2]["args"]
+    queue = actual[3]["args"]
     assert queue[:-1] == [
         "queue",
         "create",
@@ -290,9 +300,10 @@ def test_reboot_does_not_answer_advisor(fake_rig, capsys, monkeypatch):
         ["up", "kernel"],
         ["ps", "--nodes"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
-    assert [(call["tty"], call["stdin"]) for call in actual] == [(False, "")] * 7
+    assert [(call["tty"], call["stdin"]) for call in actual] == [(False, "")] * 8
     assert execs == [["herdr"]]
     assert printed(capsys) == (
         [
@@ -377,6 +388,7 @@ def test_another_intentionally_stopped_seat(fake_rig, capsys):
     assert [x["args"][:2] for x in calls()] == [
         ["ps", "--nodes"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
     assert printed(capsys) == (
@@ -402,6 +414,7 @@ def test_crashed_advisor_restarts(fake_rig, capsys, monkeypatch):
         ["ps", "--nodes"],
         ["up", "kernel"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
     assert printed(capsys) == (
@@ -426,6 +439,7 @@ def test_platform_restores(fake_rig, capsys, monkeypatch, start_rc):
         ["start", "--last"],
         ["ps", "--nodes"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
     expected = [
@@ -456,6 +470,7 @@ def test_stopped_advisor_returns(fake_rig, capsys):
     assert [x["args"][:2] for x in calls()] == [
         ["ps", "--nodes"],
         ["ps", "--nodes"],
+        ["config", "get"],
         ["queue", "create"],
     ]
     assert printed(capsys) == (
@@ -619,6 +634,164 @@ def test_queue_output_stays_off_the_terminal(fake_rig, capfd):
         f"rigs-up: step 3 of 4: {NORMAL}",
         "rigs-up: step 4 of 4: told main-lead@hq the start is done; starting herdr",
     ]
+    assert err == ""
+
+
+def test_never_started_beside_running_seats(fake_rig, capsys):
+    set_responses, calls, _ = fake_rig
+    set_responses(ALL_UP + [NEVER])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert STEP3N in lines
+    assert err == ""
+    assert not any(call["args"][:2] == ["start", "--last"] for call in calls())
+    assert (
+        STEP3N.removeprefix("rigs-up: step 3 of 4: ") + "." in calls()[-1]["args"][-1]
+    )
+
+
+def test_never_started_beside_down_seat(fake_rig, capsys):
+    set_responses, calls, _ = fake_rig
+    down = changed(
+        {"openrig-team-owner@workflow-engine"},
+        sessionStatus="exited",
+        startupStatus="ready",
+        lifecycleState="detached",
+    )
+    set_responses(down + [NEVER], ALL_UP + [NEVER])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert STEP3N in lines
+    assert err == ""
+    assert sum(call["args"] == ["start", "--last"] for call in calls()) == 1
+
+
+def test_operator_address_from_config(fake_herdr, fake_rig, monkeypatch, capfd):
+    _, rig_calls, execs = fake_rig
+    monkeypatch.setenv("FAKE_OPERATOR", "main-operator@hq")
+    read_fd, write_fd = os.pipe()
+    os.write(write_fd, b"y\n")
+    os.close(write_fd)
+    old_fd = os.dup(0)
+    try:
+        os.dup2(read_fd, 0)
+        os.close(read_fd)
+        assert rigs_up.main(ARGS) == 0
+    finally:
+        os.dup2(old_fd, 0)
+        os.close(old_fd)
+    calls = rig_calls()
+    queue = calls[-1]["args"]
+    assert queue[queue.index("--destination") + 1] == "main-operator@hq"
+    assert [
+        call
+        for call in calls
+        if call["args"] == ["config", "get", "agents.operator_session"]
+    ] == [
+        {
+            "args": ["config", "get", "agents.operator_session"],
+            "tty": False,
+            "stdin": "",
+        }
+    ]
+    assert execs == []
+    out, err = capfd.readouterr()
+    assert err == ""
+    assert out.splitlines()[-1] == (
+        "rigs-up: step 4 of 4: told main-operator@hq the start is done; herdr is already running"
+    )
+
+
+@pytest.mark.parametrize(
+    ("return_code", "reason"),
+    [(1, "exited 1"), (0, "printed nothing")],
+)
+def test_config_read_failure_starts_herdr(
+    fake_herdr, fake_rig, monkeypatch, capfd, return_code, reason
+):
+    reply, _ = fake_herdr
+    reply((FIXTURES / "herdr-status-server-not-running.json").read_text())
+    _, calls, execs = fake_rig
+    monkeypatch.setenv("FAKE_OPERATOR", "")
+    monkeypatch.setenv("FAKE_CONFIG_RC", str(return_code))
+    assert rigs_up.main(ARGS) == 0
+    assert not any(call["args"][:2] == ["queue", "create"] for call in calls())
+    assert execs == [["herdr"]]
+    out, err = capfd.readouterr()
+    assert err == ""
+    assert out.splitlines()[-1] == (
+        f"rigs-up: step 4 of 4: couldn't tell Operator (rig config get agents.operator_session {reason}); starting herdr anyway"
+    )
+
+
+def test_config_read_failure_leaves_running_herdr(
+    fake_herdr, fake_rig, monkeypatch, capfd
+):
+    _, calls, execs = fake_rig
+    monkeypatch.setenv("FAKE_OPERATOR", "")
+    monkeypatch.setenv("FAKE_CONFIG_RC", "1")
+    assert rigs_up.main(ARGS) == 0
+    assert not any(call["args"][:2] == ["queue", "create"] for call in calls())
+    assert execs == []
+    out, err = capfd.readouterr()
+    assert err == ""
+    assert out.splitlines()[-1] == (
+        "rigs-up: step 4 of 4: couldn't tell Operator (rig config get agents.operator_session exited 1); herdr is already running"
+    )
+
+
+def test_never_started_with_none_stopped(fake_rig, capsys):
+    set_responses, _, _ = fake_rig
+    up = changed(
+        {STOPPED},
+        intentionallyStopped=False,
+        sessionStatus="running",
+        startupStatus="ready",
+    )
+    set_responses(up + [NEVER])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert (
+        "rigs-up: step 3 of 4: 18 seats running, none stopped on purpose, "
+        "1 recorded and never started (never.owner@oq-rigsup-fields)"
+    ) in lines
+    assert err == ""
+
+
+def test_never_started_kernel_seat(fake_rig, capsys):
+    set_responses, calls, _ = fake_rig
+    set_responses(ALL_UP + [dict(NEVER, rigName="kernel")])
+    assert rigs_up.main(ARGS) == 0
+    assert not any(
+        call["args"][:2] in (["start", "--last"], ["up", "kernel"]) for call in calls()
+    )
+    lines, err = printed(capsys)
+    assert (
+        "rigs-up: step 3 of 4: 17 seats running, 1 stopped on purpose "
+        "(advisor-lead@kernel), 1 recorded and never started (never.owner@kernel)"
+    ) in lines
+    assert err == ""
+
+
+def test_never_started_marked_stopped(fake_rig, capsys):
+    set_responses, _, _ = fake_rig
+    set_responses(ALL_UP + [dict(NEVER, intentionallyStopped=True)])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert STEP3N in lines
+    assert err == ""
+
+
+def test_two_never_started_seats_are_sorted_and_joined(fake_rig, capsys):
+    set_responses, _, _ = fake_rig
+    set_responses(ALL_UP + [NEVER, dict(NEVER, logicalId="another.owner")])
+    assert rigs_up.main(ARGS) == 0
+    lines, err = printed(capsys)
+    assert (
+        "rigs-up: step 3 of 4: 17 seats running, 1 stopped on purpose "
+        "(advisor-lead@kernel), 2 recorded and never started "
+        "(another.owner@oq-rigsup-fields, never.owner@oq-rigsup-fields)"
+    ) in lines
     assert err == ""
 
 

@@ -1,0 +1,29 @@
+{
+  "rigId": "01M8D95RM9MYP9SAC259HKTTFQ",
+  "rigName": "oq-rigsup-fields",
+  "logicalId": "never.owner",
+  "canonicalSessionName": null,
+  "hostSelfId": "host-f7ff83c5",
+  "runtime": "terminal",
+  "model": null,
+  "modelObservation": {
+    "status": "unknown",
+    "reason": "seat-not-running"
+  },
+  "needsAttention": false,
+  "sessionStatus": null,
+  "startupStatus": null,
+  "oriented": "n-a",
+  "lifecycleState": "detached",
+  "agentActivity": {
+    "state": "unknown"
+  },
+  "hasAssignedWork": false,
+  "assignedWorkCount": 0,
+  "pendingWorkCount": 0,
+  "resumeType": null,
+  "resumeTokenPresent": false,
+  "lastActivity": "2026-11-27T01:16:05.618Z",
+  "intentionallyStopped": false,
+  "storedSessionStatus": null
+}

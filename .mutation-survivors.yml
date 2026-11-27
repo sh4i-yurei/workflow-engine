@@ -63,7 +63,7 @@
   reason: >-
     False and None are both false in the only test of waiting_announced, and it
     is set to True right after the waiting line prints.
-- mutant: tools.rigs_up.x_main__mutmut_140
+- mutant: tools.rigs_up.x_main__mutmut_162
   reason: >-
     `>=` and `>` differ only when the monotonic clock equals the deadline to the
     nanosecond. The run reads the real clock, so no input through the command
