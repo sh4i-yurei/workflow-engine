@@ -1,1 +1,1 @@
-Your domain is Agent platform. Its systems are the rows whose owner is the Agent platform service owner in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.
+Your domain is Agent platform. Its systems are the rows whose Domain is Agent platform in the table in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.

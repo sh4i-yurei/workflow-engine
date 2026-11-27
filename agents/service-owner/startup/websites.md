@@ -1,1 +1,1 @@
-Your domain is Websites. Its systems are the rows whose owner is the Websites service owner in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.
+Your domain is Websites. Its systems are the rows whose Domain is Websites in the table in Work system decision 27, in `~/Documents/Second_Brain/10_Projects/16_Tooling/Work system.md`. Read that table first; each row names the note that describes its system.
