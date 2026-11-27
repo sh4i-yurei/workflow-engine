@@ -72,7 +72,8 @@ def down_seats(seats, rig=None):
     return [
         seat
         for seat in seats
-        if not seat["intentionallyStopped"]
+        if seat["sessionStatus"] is not None
+        and not seat["intentionallyStopped"]
         and (
             rig is None
             or (
@@ -162,16 +163,24 @@ def main(argv=None):
         if seats is not None:
             down = down_seats(seats)
             if not down:
+                never_started = sorted(
+                    f"{seat['logicalId']}@{seat['rigName']}"
+                    for seat in seats
+                    if seat["sessionStatus"] is None
+                )
                 stopped = sorted(
                     seat["canonicalSessionName"]
                     for seat in seats
-                    if seat["intentionallyStopped"]
+                    if seat["sessionStatus"] is not None
+                    and seat["intentionallyStopped"]
                 )
-                running = len(seats) - len(stopped)
+                running = len(seats) - len(stopped) - len(never_started)
                 if stopped:
                     summary = f"{running} seats running, {len(stopped)} stopped on purpose ({', '.join(stopped)})"
                 else:
                     summary = f"{running} seats running, none stopped on purpose"
+                if never_started:
+                    summary += f", {len(never_started)} recorded and never started ({', '.join(never_started)})"
                 progress(f"step 3 of 4: {summary}")
                 break
             if not waiting_announced:
@@ -199,38 +208,46 @@ def main(argv=None):
             f"rigs-up finished at {when}: {summary}. herdr is starting now. "
             "Please rename the herdr agents and check them."
         )
-    queue = [
-        "rig",
-        "queue",
-        "create",
-        "--source",
-        "rigs-up@host",
-        "--destination",
-        "main-lead@hq",
-        "--tags",
-        "project:openrig-team,item:startup-command",
-        "--summary",
-        "rigs-up: start done",
-        "--body",
-        body,
-    ]
-    result = subprocess.run(queue, stdin=subprocess.DEVNULL, capture_output=True)
-    if result.returncode:
-        if running:
-            progress(
-                f"step 4 of 4: couldn't tell main-lead@hq (rig queue create exited {result.returncode}); herdr is already running"
-            )
-        else:
-            progress(
-                f"step 4 of 4: couldn't tell main-lead@hq (rig queue create exited {result.returncode}); starting herdr anyway"
-            )
+    config = subprocess.run(
+        ["rig", "config", "get", "agents.operator_session"],
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+    )
+    address = config.stdout.strip()
+    if config.returncode or not address:
+        reason = (
+            f"exited {config.returncode}" if config.returncode else "printed nothing"
+        )
+        then = "herdr is already running" if running else "starting herdr anyway"
+        progress(
+            f"step 4 of 4: couldn't tell Operator (rig config get agents.operator_session {reason}); {then}"
+        )
     else:
-        if running:
+        queue = [
+            "rig",
+            "queue",
+            "create",
+            "--source",
+            "rigs-up@host",
+            "--destination",
+            address,
+            "--tags",
+            "project:openrig-team,item:startup-command",
+            "--summary",
+            "rigs-up: start done",
+            "--body",
+            body,
+        ]
+        result = subprocess.run(queue, stdin=subprocess.DEVNULL, capture_output=True)
+        if result.returncode:
+            then = "herdr is already running" if running else "starting herdr anyway"
             progress(
-                "step 4 of 4: told main-lead@hq the start is done; herdr is already running"
+                f"step 4 of 4: couldn't tell {address} (rig queue create exited {result.returncode}); {then}"
             )
         else:
-            progress("step 4 of 4: told main-lead@hq the start is done; starting herdr")
+            then = "herdr is already running" if running else "starting herdr"
+            progress(f"step 4 of 4: told {address} the start is done; {then}")
     if running:
         return 0
     sys.stdout.flush()
