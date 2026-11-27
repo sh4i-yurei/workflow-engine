@@ -131,14 +131,20 @@ These three rules come from runs on the laptop on 2026-11-26 (Workflow engine de
    middle of another one, don't make it wait. Hand it to a clone, unless the task takes under a
    minute or needs your own next decision. Your conversation carries what the clone needs.
    - For one task, use a headless fork, in its own labelled job pane, "<seat>: <item> clone". Read
-     your session id with `echo $CLAUDE_CODE_SESSION_ID`, then run
-     `claude -p --resume <that id> --fork-session --output-format json "<the task, with its row id>"`.
-     The fork gets its own session and leaves yours untouched.
+     your session id with `echo $CLAUDE_CODE_SESSION_ID` and your working folder with `pwd`, then
+     run it from that folder, because Claude finds a session only from the folder it was started in:
+     `cd <your working folder> && env -u OPENRIG_SESSION_NAME claude -p --resume <that id>
+     --fork-session --output-format json "<the task>"`. The fork gets its own session and leaves
+     yours untouched. It doesn't touch the queue: whether a fork can claim and close a row as your
+     seat isn't proven yet (Workflow engine decision 49). Read its answer from its output, and close
+     or note the row yourself.
    - For a task that needs several turns, use a seat fork:
      `rig fork <your address> --rig <rig> --pod <pod> --member <clone name>`. Its first message must
      be exactly: "You are a fork of <your address>. Run rig whoami and work only as the address it
-     gives." Without that, a seat fork believes it is you and refuses its own rows. Remove it with
-     `rig remove <rig> <pod.member> --fallback <your address>` when its rows are closed.
+     gives." Without that, a seat fork believes it is you and refuses its own rows. It shares your
+     working folder, so if it writes code, give it its own worktree. Remove it when its rows are
+     closed with `rig remove <rig id> <pod.member> --fallback <your address>`, taking the rig's id
+     from `rig ps --json`, because that argument is the id, not the name.
    - A clone works only inside its task and your recorded decisions. Anything that would change the
      project's decisions or the note's Decisions section, or that needs the user, comes back to you
      as "input required". Only you write the project's decisions.
